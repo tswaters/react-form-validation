@@ -1,0 +1,98 @@
+{
+  "name": "yarfl",
+  "version": "0.0.0",
+  "description": "yet another react form library",
+  "browser": "dist/index.umd.js",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.mjs",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "rollup -c",
+    "lint": "eslint src",
+    "start": "npm run build -- -w",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tyler Waters <tyler.waters@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tswaters/yarfl"
+  },
+  "peerDependencies": {
+    "react": ">16.8",
+    "react-dom": ">16.8"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.6.4",
+    "@babel/core": "^7.6.4",
+    "@babel/preset-env": "^7.6.3",
+    "@babel/preset-react": "^7.6.3",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.6.0",
+    "eslint-plugin-react": "^7.16.0",
+    "eslint-plugin-react-hooks": "^2.2.0",
+    "prettier": "^1.18.2",
+    "react": "^16.11.0",
+    "react-dom": "^16.11.0",
+    "rimraf": "^3.0.0",
+    "rollup": "^1.26.2",
+    "rollup-plugin-babel": "^4.3.3"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
+  },
+  "eslintConfig": {
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    },
+    "overrides": [
+      {
+        "files": [
+          "test/**/*.js"
+        ],
+        "env": {
+          "mocha": true
+        }
+      },
+      {
+        "files": [
+          "src/**/*.js"
+        ],
+        "env": {
+          "browser": true
+        }
+      }
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2019,
+      "sourceType": "module"
+    },
+    "parser": "babel-eslint",
+    "plugins": [
+      "react",
+      "react-hooks"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:react/recommended"
+    ],
+    "rules": {
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
+      "no-unused-vars": "warn"
+    }
+  },
+  "eslintIgnore": [
+    "dist",
+    "node_modules"
+  ],
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
+  }
+}
