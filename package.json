@@ -9,6 +9,7 @@
     "pre_build": "rimraf dist",
     "_build": "rollup -c",
     "build": "cross-env NODE_ENV=production npm run _build",
+    "precoverage": "rimraf coverage",
     "coverage": "nyc --reporter=html npm test",
     "lint": "eslint src",
     "start": "npm run _build -- -w",

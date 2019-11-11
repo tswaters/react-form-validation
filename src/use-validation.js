@@ -10,17 +10,15 @@ import {
 import { FormContext } from './context'
 
 const errors = new Map()
-const getErrorKey = (err, code) => `${err}_${code}`
+const getErrorKey = (err, code) => `${code}_${err.message}`
 const getError = (error, validity) => {
-  if (validity.valid) return null
   let code = null
   for (const x in validity) if (validity[x]) code = x
   const key = getErrorKey(error, code)
   if (errors.has(key)) return errors.get(key)
-  const _error = new Error(error)
-  _error.code = code
-  errors.set(key, _error)
-  return _error
+  error.code = code
+  errors.set(key, error)
+  return error
 }
 
 const useValidation = (
@@ -76,7 +74,7 @@ const useValidation = (
 
   const handleOnInvalid = useCallback(
     ({ target: element }) =>
-      updateState(element.validationMessage, element.validity),
+      updateState(new Error(element.validationMessage), element.validity),
     [updateState]
   )
 
@@ -129,8 +127,8 @@ const useValidation = (
 
   useEffect(() => {
     const { current: thisRef } = innerRef
-    thisRef?.addEventListener('invalid', handleOnInvalid)
-    return () => thisRef?.removeEventListener('invalid', handleOnInvalid)
+    thisRef.addEventListener('invalid', handleOnInvalid)
+    return () => thisRef.removeEventListener('invalid', handleOnInvalid)
   }, [innerRef, handleOnInvalid])
 
   return { handleBlur, handleChange, handleClick, handleFocus }

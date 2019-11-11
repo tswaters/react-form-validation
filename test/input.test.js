@@ -142,6 +142,7 @@ describe('input types', () => {
         <Form>
           <Input
             blur
+            recheck
             required
             onError={e => (error = e)}
             onValid={e => (valid = e)}
@@ -158,7 +159,7 @@ describe('input types', () => {
       equal(valid, false)
       equal(invalid, true)
 
-      input.getDOMNode().value = 'test' // you're tearing me apart enzyme
+      input.simulate('change').getDOMNode().value = 'test' // you're tearing me apart enzyme
       input.simulate('blur')
 
       await wait()
@@ -195,7 +196,7 @@ describe('input types', () => {
       equal(valid, false)
       equal(invalid, true)
 
-      input.getDOMNode().value = 'test' // you're tearing me apart enzyme
+      input.simulate('change').getDOMNode().value = 'test' // you're tearing me apart enzyme
       form.getDOMNode().submit()
 
       await wait()
@@ -232,6 +233,7 @@ describe('input types', () => {
             id="two"
             name="two"
             required
+            blur
             validations={[
               (input, others) => {
                 const other = others.find(x => x.id === 'one')
@@ -249,9 +251,36 @@ describe('input types', () => {
       const oneInput = wrapper.find('input#one')
       const twoInput = wrapper.find('input#two')
 
-      oneInput.simulate('focus').getDOMNode().value = 'one' // you're tearing me apart enzyme
-      twoInput.simulate('focus').getDOMNode().value = 'two' // you're tearing me apart enzyme
+      oneInput
+        .simulate('focus')
+        .simulate('change')
+        .getDOMNode().value = 'one' // you're tearing me apart enzyme
+      oneInput.simulate('blur')
+
+      await wait()
+      equal(oneValid, true)
+      equal(oneInvalid, false)
+      equal(oneError, null)
+      equal(twoValid, null)
+      equal(twoInvalid, null)
+      equal(twoError, null)
+
       form.submit()
+
+      await wait()
+      equal(oneValid, true)
+      equal(oneInvalid, false)
+      equal(oneError, null)
+      equal(twoValid, false)
+      equal(twoInvalid, true)
+      equal(twoError.code, 'valueMissing')
+      equal(onSubmitStub.callCount, 0)
+
+      twoInput
+        .simulate('focus')
+        .simulate('change')
+        .getDOMNode().value = 'two' // you're tearing me apart enzyme
+      twoInput.simulate('blur')
 
       await wait()
       equal(oneValid, true)
@@ -262,8 +291,12 @@ describe('input types', () => {
       equal(twoError.code, 'customError')
       equal(onSubmitStub.callCount, 0)
 
-      oneInput.getDOMNode().value = 'two' // you're tearing me apart enzyme
-      oneInput.simulate('blur')
+      twoInput
+        .simulate('focus')
+        .simulate('change')
+        .getDOMNode().value = 'one' // you're tearing me apart enzyme
+      twoInput.simulate('blur')
+      form.submit()
 
       await wait()
       equal(oneValid, true)
@@ -272,10 +305,48 @@ describe('input types', () => {
       equal(twoValid, true)
       equal(twoInvalid, false)
       equal(twoError, null)
+      equal(onSubmitStub.callCount, 1)
+      wrapper.unmount()
+    })
 
-      form.submit()
+    it('clicking a checkbox', async () => {
+      const onSubmitStub = stub()
+      let error = null
+      let valid = null
+      let invalid = null
+
+      const wrapper = mount(
+        <Form onSubmit={onSubmitStub}>
+          <Input
+            click
+            type="checkbox"
+            value="true"
+            required
+            onError={e => (error = e)}
+            onValid={e => (valid = e)}
+            onInvalid={e => (invalid = e)}
+          />
+        </Form>
+      )
+
+      const input = wrapper.find('input')
+      const form = wrapper.find('form')
+      input.simulate('focus')
+      form.getDOMNode().submit()
 
       await wait()
+      equal(error.code, 'valueMissing')
+      equal(valid, false)
+      equal(invalid, true)
+
+      input.simulate('click').getDOMNode().checked = true // you're tearing me apart enzyme
+      form.getDOMNode().submit()
+
+      await wait()
+      equal(error, null)
+      equal(valid, true)
+      equal(invalid, false)
+
       equal(onSubmitStub.callCount, 1)
       wrapper.unmount()
     })

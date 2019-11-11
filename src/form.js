@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useRef, forwardRef } from 'react'
-import { bool, func } from 'prop-types'
+import { func } from 'prop-types'
 import { FormContext } from './context'
 
 const getElement = (search, elements, mapper = x => x) =>
@@ -9,7 +9,7 @@ const getElement = (search, elements, mapper = x => x) =>
       .findIndex(x => x === search || x.id === search || x.name === search)
   ]
 
-const Form = forwardRef(({ onSubmit, preventDefault = true, ...rest }, ref) => {
+const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
   const formRef = useRef(ref)
   const touched = useRef({})
   const fields = useRef([])
@@ -59,10 +59,10 @@ const Form = forwardRef(({ onSubmit, preventDefault = true, ...rest }, ref) => {
     const field = getElement(formInput, fields.current, x => x.field)
     const others = fields.current.map(x => x.field)
 
-    for (const fn of field?.details?.validations ?? []) {
+    for (const fn of field.details.validations ?? []) {
       try {
         let err = await fn(formInput, others)
-        if (typeof err === 'string' && err !== '') _error = new Error(err)
+        if (typeof err === 'string') _error = new Error(err)
         else if (err instanceof Error) _error = err
       } catch (err) {
         _error = err
@@ -74,7 +74,7 @@ const Form = forwardRef(({ onSubmit, preventDefault = true, ...rest }, ref) => {
       formInput.setCustomValidity(_error.message)
       formInput.checkValidity()
     } else {
-      field?.details?.updateState(_error, formInput.validity)
+      field.details.updateState(_error, formInput.validity)
     }
   }, [])
 
@@ -86,7 +86,7 @@ const Form = forwardRef(({ onSubmit, preventDefault = true, ...rest }, ref) => {
     async ({ target: element }) => {
       const field = getElement(element, fields.current, x => x.field)
       await validateSingle(element)
-      for (const item of field?.details?.otherArray) {
+      for (const item of field.details.otherArray) {
         const other = getElement(item, element.form.elements)
         if (other) await validateSingle(other)
       }
@@ -97,19 +97,18 @@ const Form = forwardRef(({ onSubmit, preventDefault = true, ...rest }, ref) => {
   /**
    * Form submit handler
    * Verify each of our inputs passes validation before calling onSubmit
-   * We use `preventDefault` - normally a consumer's callback might call this
    * But if validation fails, it won't ever be called - make sure to not submit the form.
    */
   const handleSubmit = useCallback(
     async e => {
-      if (preventDefault) e.preventDefault()
       e.persist()
       for (const { field } of fields.current) {
         await validateSingle(field, true)
       }
       if (e.target.checkValidity()) onSubmit?.(e)
+      else e.preventDefault()
     },
-    [preventDefault, onSubmit, validateSingle]
+    [onSubmit, validateSingle]
   )
 
   const setInputTouched = useCallback(
@@ -134,8 +133,7 @@ const Form = forwardRef(({ onSubmit, preventDefault = true, ...rest }, ref) => {
 Form.displayName = 'Form'
 
 Form.propTypes = {
-  onSubmit: func,
-  preventDefault: bool
+  onSubmit: func
 }
 
 const memoized = memo(Form)
