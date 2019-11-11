@@ -1,1 +1,301 @@
-# Yet Another React Form Library
+# React Form Validation
+
+The goal of this library is to implement the [Constraint Validation API](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#the-constraint-validation-api) in React while not getting in your way to do it.
+
+Of the existing react form libraries, the use of the constraint validation api is woefully inadequate. Using this API properly is important for accessibility - you need to let the user agent know what is going on.
+
+## usage
+
+You can import the `Form` and `Input` exports from this library.
+
+These are wrappers around `<form/>` and `<input>` elements. Any props you provide to these elements will be passed down to the underlying input/form element. If you need to, you can also access the underlying element by passing a `ref` property.
+
+`Input` elements must be children of a `Form` element. Under the covers, this library uses context to keep track of all fields on the form and will validate all of them if the form is submitted.
+
+It is recommended to have a wrapper component for any inputs you intend to use with labels/helper text and use that. Each input element can have it's own error, valid & invalid values so keeping them in one massive component is a pain to manage.
+
+A sample element (`<FormGroup />`) that implements the required classes for bootstrap4 has been provided - you can use that, or view it as a base implementation for your own form group implementation.
+
+## api
+
+**_FormGroup_**
+
+**_Form_**
+
+```jsx
+import { Form } from '@tswaters/react-form-validation'
+;<Form preventDefault={true} ref={formRef} />
+```
+
+- **preventDefault** _boolean_ - if provided, `e.preventDefault()` will be called on form submission
+
+- **ref** - you can pass a `ref` to get a reference to the underlying `<form>` element
+
+- any additional props will be passed down to the underlying `<form>` element
+
+- **NOTE:** onSubmit will only be called if the form passes validation!
+
+**_Input_**
+
+```jsx
+import { Input } from '@tswaters/react-form-validation'
+;<Input
+  validations={arrayOf(func)}
+  other={oneOfType([arrayOf(string), string])}
+  recheck={bool}
+  blur={bool}
+  change={bool}
+  onError={func}
+  onInvalid={func}
+  onValid={func}
+/>
+```
+
+- **validations** _(async (field, others) => void|string|Error)_
+
+  An array of validation routines that will be called for validation. `field` is a reference to the `<input>`, `others` is an array of all form inputs (including the one being validated). You can return:
+
+  - an error
+  - a string (this will be interpreted as an error)
+  - null/undefined (returning nothing signifies validation passes)
+  - throwing an error will be interpreted as failing validation
+
+* **other** _(string|string[])_ - provide the name or id of another element on the form. When validating this element, the other(s) will also have their validation routines called, assuming they have not yet been touched.
+
+* **blur** _bool_ - validate this field on input blur
+
+* **change** _bool_ - validate this field on input change
+
+* **recheck** _bool_ - if recheck is passed as TRUE, once a form field is validated it will be revalidated on any change.
+
+- **OnError** _(Error|null) => void_ - will be called if there is a validation error. This will always be an error object (so check `message`) or `null` if there is no error.
+
+- **OnInvalid** _(bool) => void_ will be called after validation with a bool indicating the form field is invalid
+
+- **OnValid** _(bool) => void_ will be called after validation with a bool indicating the form field is valid
+
+* any additional props will be passed down to the underlying `<input>` element
+
+**_FormContext_**
+
+```jsx
+import { FormContext } from '@tswaters/react-form-validation'
+;<FormContext.Subscriber>
+  {{ register, unregister, validate, setInputTouched }} => {}
+</FormContext.Subscriber>
+```
+
+```jsx
+import { FormContext } from '@tswaters/react-form-validation'
+const { register, unregister, validate, setInputTouched } = useContext(
+  FormContext
+)
+```
+
+You probably don't need to use this, but is provided for completeness.
+
+The `<Form/>` element will provide this context to child elements
+
+The `<Input />` element will subscribe and provide values so the `<Form>` can track elements
+
+## examples
+
+### implementing a FormGroup
+
+```js
+const FormGroup = forwardRef(
+  ({ className = '', id, label, validations, other, ...rest }, ref) => {
+    const [error, setError] = useState(null)
+    const [valid, setValid] = useState(null)
+    const [invalid, setInvalid] = useState(null)
+    const wasValidated = useMemo(() => error || valid || invalid, [
+      error,
+      valid,
+      invalid
+    ])
+    const handleError = useCallback(e => setError(e), [])
+    const handleValid = useCallback(e => setValid(e), [])
+    const handleInvalid = useCallback(e => setInvalid(e), [])
+    return (
+      <div
+        className={`form-group ${
+          wasValidated ? 'was-validated' : ''
+        } ${className}`}
+      >
+        <label className="control-label" htmlFor={id}>
+          {label}
+        </label>
+        <Input
+          ref={ref}
+          id={id}
+          className="form-control"
+          type="text"
+          other={other}
+          validations={validations}
+          onError={handleError}
+          onValid={handleValid}
+          onInvalid={handleInvalid}
+          {...rest}
+        />
+        {error && <div className="invalid-feedback">{error.message}</div>}
+      </div>
+    )
+  }
+)
+```
+
+### using FormGroup
+
+The above `<FormGroup />` element is provided as an export to this module.
+
+This component includes an `input` and `label` with bootstrap classes, and `div.invalid-feedback` with the error message.
+
+You can provide any of the build-it form validation attributes, such as `required`, `minLength`, `min`, `max`, `step`, `pattern`, etc.
+
+```js
+const FormGroupExample = () => (
+  <Form noValidate preventDefeault>
+    <FormGroup id="name" name="name" label="Name" required />
+    <button type="submit">submit</button>
+  </Form>
+)
+```
+
+### Custom Validation Routines
+
+You can provide an array of validations to the `<Input>` element and they will be called as part of validating the element.
+
+These validation routines can be async and await their response. Form submission will be blocked while validations are awaiting their response.
+
+The validation routine will consider something as failed with the following returns:
+
+- a string - the error returned will be `new Error(returnValue)`
+
+- an error - the error returned will be `returnValue`
+
+- throw an error - the error returned will be `thrownValue`
+
+Otherwise, the validation is considered to have succeeded.
+
+```js
+import { FormGroup, Input } from '@tswaters/react-form-validation'
+
+const UserInput = () => {
+  const [loading, setLoading] = useState(true)
+  const validations = useMemo(
+    () => [
+      async input => {
+        setLoading(true)
+        try {
+          await UserService.checkIfAlreadyExists(input.value)
+        } finally {
+          setLoading(false)
+        }
+      }
+    ],
+    []
+  )
+
+  return (
+    <FormGroup
+      label="User Name"
+      id="user-name"
+      change={true}
+      debounce={500}
+      name="user-name"
+      validations={validations}
+      className={loading ? 'loading' : ''}
+    />
+  )
+}
+
+const MyForm = () => {
+  const [error, setError] = useState(null)
+  const [response, setResponse] = useState(null)
+
+  const handleSubmit = useCallback(async e => {
+    e.preventDefault()
+    try {
+      const res = await fetch('/api', {
+        method: 'POST',
+        body: new FormData(e.target),
+        headers: {
+          Accept: 'application/json'
+        }
+      })
+      const data = await res.json()
+      if (res.ok) return setResponse(data)
+      throw data
+    } catch (err) {
+      setError(err)
+    }
+  }, [])
+
+  return (
+    <Form onSubmit={handleSubmit} noValidate>
+      <UserInput />
+      <FormGroup
+        id="name"
+        name="name"
+        label="Name"
+        other="same-as"
+        blur={true}
+        recheck={true}
+        required
+        validations={[
+          input =>
+            input.value === 'Homer' ? new Error('no homers allowed') : null
+        ]}
+      />
+      <FormGroup
+        id="same-as"
+        name="same-as"
+        label="Same As"
+        blur={true}
+        recheck={true}
+        required
+        validations={[
+          (input, fields) => {
+            const other = fields.find(x => x.id === 'name')
+            if (!other || other.value !== input.value)
+              throw new Error('must match')
+          }
+        ]}
+      />
+      <button type="submit">Submit</button>
+      {response && <div>{response}</div>}
+      {error && <div>{error.message}</div>}
+    </Form>
+  )
+}
+```
+
+## A note on errors
+
+Any errors for non-custom validation routines will be returned by the browser, so based upon the user's OS/browser language settings, you'll get different translated error messages, for better or worse.
+
+`message` will be populated with the browser-defined error, and a `code` is also set that identifies the type of error that occured. As an example, an error raised from a required input not being provided might look something like this:
+
+```json
+{
+  "message": "Please provide a value",
+  "code": "valueMissing"
+}
+```
+
+You can override the translations by inspecting the code and providing the correct translation:
+
+```js
+const ErrorDisplay = error => {
+  const [t] = useTranslation() // or however else you get a translation function
+  return error ? t(`validation-error-${error.code}` : null
+}
+```
+
+For custom error messages, `error.message` will be whatever you returned or threw back and the code will be `customError`
+
+## Limitations / Bugs
+
+- only the first error for a given input element will be returned
+
+- there's gunna be some weirdness with `code` returning incorrectly if multiple constraint errors are raised.

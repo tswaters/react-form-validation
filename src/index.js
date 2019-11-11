@@ -1,8 +1,4 @@
-import { render } from 'react-dom'
-import React from 'react'
-
-const Test = () => {
-  return <p>Test</p>
-}
-
-render(<Test />, document.getElementById('root'))
+export { FormContext } from './context'
+export { Form } from './form'
+export { Input } from './input'
+export { FormGroup } from './form-group'
