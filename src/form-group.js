@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo, useCallback, useState } from 'react'
+import React, { memo, forwardRef, useMemo, useCallback, useState } from 'react'
 import { string, array, oneOfType, arrayOf } from 'prop-types'
 import { Input } from './input'
 
@@ -52,6 +52,9 @@ const FormGroup = forwardRef(
 )
 
 FormGroup.displayName = 'FormGroup'
-
 FormGroup.propTypes = propTypes
-export { FormGroup }
+
+const memoized = memo(FormGroup)
+memoized.displayName = `Memo(${FormGroup.displayName})`
+
+export { memoized as FormGroup }

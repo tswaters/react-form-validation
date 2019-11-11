@@ -1,13 +1,12 @@
-import React, { memo, useMemo, useRef, useCallback, forwardRef } from 'react'
+import React, { memo, useRef, forwardRef } from 'react'
 import { func, bool, arrayOf, oneOfType, string, number } from 'prop-types'
 
-import { useFormContext } from './use-form-context'
-import { useDebounce } from './use-debounce'
-import { useUpdateValidationState } from './use-update-validation-state'
+import { useValidation } from './use-validation'
 
 const propTypes = {
   onBlur: func,
   onChange: func,
+  onClick: func,
   onFocus: func,
   validations: arrayOf(func),
   other: oneOfType([arrayOf(string), string]),
@@ -15,17 +14,19 @@ const propTypes = {
   recheck: bool,
   blur: bool,
   change: bool,
+  click: bool,
   onError: func,
-  onInvalid: func,
   onValid: func,
+  onInvalid: func,
   name: string.isRequired // form elements must have name!
 }
 
-const Input = memo(
-  forwardRef(
+const createInput = inputType => {
+  const Wrapped = forwardRef(
     (
       {
         onBlur,
+        onClick,
         onChange,
         onFocus,
         validations,
@@ -34,73 +35,60 @@ const Input = memo(
         recheck,
         blur,
         change,
+        click,
         onError,
-        onInvalid,
         onValid,
+        onInvalid,
         ...rest
       },
       ref
     ) => {
       const innerRef = useRef(ref)
 
-      const { updateState, validated } = useUpdateValidationState({
+      const {
+        handleBlur,
+        handleChange,
+        handleClick,
+        handleFocus
+      } = useValidation(innerRef, {
+        onBlur,
+        onChange,
+        onClick,
+        onFocus,
+        validations,
+        debounce,
+        other,
+        recheck,
+        blur,
+        change,
+        click,
         onError,
         onValid,
         onInvalid
       })
 
-      const details = useMemo(
-        () => ({
-          validations,
-          updateState,
-          otherArray:
-            other == null ? [] : Array.isArray(other) ? other : [other]
-        }),
-        [validations, updateState, other]
-      )
-
-      const { validate, setInputTouched } = useFormContext(innerRef, details)
-      const waitForValidation = useDebounce(validate, debounce)
-
-      const handleFocus = useCallback(
-        e => {
-          onFocus?.(e)
-          setInputTouched(e)
-        },
-        [onFocus, setInputTouched]
-      )
-
-      const handleChange = useCallback(
-        e => {
-          onChange?.(e)
-          if ((validated && recheck) || change) waitForValidation(e)
-        },
-        [onChange, recheck, change, validated, waitForValidation]
-      )
-
-      const handleBlur = useCallback(
-        e => {
-          onBlur?.(e)
-          if (blur) waitForValidation(e)
-        },
-        [onBlur, blur, waitForValidation]
-      )
-
-      return (
-        <input
-          ref={innerRef}
-          onFocus={handleFocus}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          {...rest}
-        />
-      )
+      return React.createElement(inputType, {
+        ref: innerRef,
+        onBlur: handleBlur,
+        onChange: handleChange,
+        onClick: handleClick,
+        onFocus: handleFocus,
+        ...rest
+      })
     }
   )
-)
 
-Input.displayName = 'Input'
+  Wrapped.isFormElement = true
+  Wrapped.displayName = `Validated(${inputType})`
+  Wrapped.propTypes = propTypes
 
-Input.propTypes = propTypes
+  const memoized = memo(Wrapped)
+  memoized.displayName = `Memo(${Wrapped.displayName})`
+  return Wrapped
+}
 
-export { Input }
+const Input = createInput('input')
+const Select = createInput('select')
+const TextArea = createInput('textarea')
+
+export { Input, Select, TextArea }
