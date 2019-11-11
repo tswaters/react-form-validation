@@ -1,50 +1,38 @@
 import React, { memo, forwardRef, useMemo, useCallback, useState } from 'react'
-import { string, array, oneOfType, arrayOf } from 'prop-types'
-import { Input } from './input'
+import { node, string } from 'prop-types'
 
 const propTypes = {
-  id: string.isRequired,
-  name: string.isRequired,
   className: string,
   label: string.isRequired,
-  validations: array,
-  other: oneOfType([arrayOf(string), string])
+  children: node.isRequired
 }
 
 const FormGroup = forwardRef(
-  ({ className = '', id, label, validations, other, ...rest }, ref) => {
+  ({ children, className = '', label, ...rest }, ref) => {
     const [error, setError] = useState(null)
     const [valid, setValid] = useState(null)
     const [invalid, setInvalid] = useState(null)
-    const wasValidated = useMemo(() => error || valid || invalid, [
-      error,
-      valid,
-      invalid
-    ])
-    const handleError = useCallback(e => setError(e), [])
-    const handleValid = useCallback(e => setValid(e), [])
-    const handleInvalid = useCallback(e => setInvalid(e), [])
+    const wasValidated = useMemo(
+      () => (error || valid || invalid ? 'was-validated' : ''),
+      [error, valid, invalid]
+    )
+    const onError = useCallback(e => setError(e), [])
+    const onValid = useCallback(e => setValid(e), [])
+    const onInvalid = useCallback(e => setInvalid(e), [])
     return (
-      <div
-        className={`form-group ${
-          wasValidated ? 'was-validated' : ''
-        } ${className}`}
-      >
-        <label className="control-label" htmlFor={id}>
+      <div className={`form-group ${wasValidated} ${className}`}>
+        <label className="control-label" htmlFor={children.props.id}>
           {label}
         </label>
-        <Input
-          ref={ref}
-          id={id}
-          className="form-control"
-          type="text"
-          other={other}
-          validations={validations}
-          onError={handleError}
-          onValid={handleValid}
-          onInvalid={handleInvalid}
-          {...rest}
-        />
+        {React.cloneElement(React.Children.only(children), {
+          ref,
+          className: 'form-control',
+          type: 'text',
+          onError,
+          onValid,
+          onInvalid,
+          ...rest
+        })}
         {error && <div className="invalid-feedback">{error.message}</div>}
       </div>
     )
