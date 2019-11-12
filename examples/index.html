@@ -5,28 +5,7 @@
   href="https://unpkg.com/bootstrap@4.3.1/dist/css/bootstrap.min.css"
 />
 <script src="https://unpkg.com/@babel/standalone/babel.js"></script>
-<script>
-  Babel.registerPreset('babel-sucks', {
-    presets: [
-      Babel.availablePresets['es2015'],
-      Babel.availablePresets['react']
-    ],
-    plugins: [
-      [
-        Babel.availablePlugins['transform-modules-umd'],
-        {
-          globals: {
-            react: 'React',
-            'react-dom': 'ReactDOM',
-            'prop-types': 'PropTypes',
-            'react-form-validation': 'ReactFormValidation'
-          }
-        }
-      ]
-    ],
-    moduleId: 'main'
-  })
-</script>
+<script src="babel-preset.js"></script>
 <script src="https://unpkg.com/react@16.11.0/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@16.11.0/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/prop-types@15.7.2/prop-types.min.js"></script>
