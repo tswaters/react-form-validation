@@ -5,8 +5,7 @@ import { stub } from 'sinon'
 import { mount } from 'enzyme'
 
 import { Form, Input, Select, TextArea } from '../src/index'
-
-const wait = () => new Promise(resolve => setImmediate(resolve))
+import { wait } from './utils'
 
 describe('input types', () => {
   describe('textarea', () => {

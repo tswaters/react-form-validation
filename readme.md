@@ -6,28 +6,24 @@ Of the existing react form libraries, the use of the constraint validation api i
 
 ## usage
 
-You can import the `Form` and `Input` exports from this library.
+You can import the `Form` and `Input/Select/TextArea` exports from this library.
 
-These are wrappers around `<form/>` and `<input>` elements. Any props you provide to these elements will be passed down to the underlying input/form element. If you need to, you can also access the underlying element by passing a `ref` property.
+These are wrappers around `<form/>` and `<input/select/textarea>` elements. Any additional props you provide to these elements will be passed down to the underlying `form/input/select/textarea` element. If you need to, you can also access the underlying element by passing a `ref`.
 
 `Input` elements must be children of a `Form` element. Under the covers, this library uses context to keep track of all fields on the form and will validate all of them if the form is submitted.
 
-It is recommended to have a wrapper component for any inputs you intend to use with labels/helper text and use that. Each input element can have it's own error, valid & invalid values so keeping them in one massive component is a pain to manage.
-
-A sample element (`<FormGroup />`) that implements the required classes for bootstrap4 has been provided - you can use that, or view it as a base implementation for your own form group implementation.
+A `Validator` component is also provided which attempts to make using the api a bit easier. This is a container element that uses a render prop which is called with `({ error, valid, invalid, validated })`. This routine recursively traverses any provided props to replace `input/select/textarea` elements with the exports from this library, so it will duplicate any work on the tree that react may have done on that JSX tree up to that point.
 
 ## api
-
-**_FormGroup_**
 
 **_Form_**
 
 ```jsx
 import { Form } from '@tswaters/react-form-validation'
-;<Form preventDefault={true} ref={formRef} />
+const example = () => {
+  return <Form />
+}
 ```
-
-- **preventDefault** _boolean_ - if provided, `e.preventDefault()` will be called on form submission
 
 - **ref** - you can pass a `ref` to get a reference to the underlying `<form>` element
 
@@ -35,32 +31,40 @@ import { Form } from '@tswaters/react-form-validation'
 
 - **NOTE:** onSubmit will only be called if the form passes validation!
 
-**_Input_**
+- **NOTE:** this library calls `preventDefault` to do async validations.
+
+**_Form element components_**
+
+Input/Select/TextArea take all the same props.
 
 ```jsx
-import { Input } from '@tswaters/react-form-validation'
-;<Input
-  validations={arrayOf(func)}
-  other={oneOfType([arrayOf(string), string])}
-  recheck={bool}
-  blur={bool}
-  change={bool}
-  onError={func}
-  onInvalid={func}
-  onValid={func}
-/>
+import { Input, Select, TextArea } from '@tswaters/react-form-validation'
+const example = () => (
+  <>
+    <Input
+      validations={arrayOf(func)}
+      other={oneOfType([arrayOf(string), string])}
+      recheck={bool}
+      blur={bool}
+      change={bool}
+      onError={func}
+      onInvalid={func}
+      onValid={func}
+    />
+  </>
+)
 ```
 
-- **validations** _(async (field, others) => void|string|Error)_
+- **validations** _(field, others) => Promise<void|string|Error>_
 
-  An array of validation routines that will be called for validation. `field` is a reference to the `<input>`, `others` is an array of all form inputs (including the one being validated). You can return:
+  An array of validation routines that will be called for validation. `field` is a reference to the `input/select/textarea`, `others` is an array of all form inputs (including the one being validated). You can return:
 
   - an error
   - a string (this will be interpreted as an error)
   - null/undefined (returning nothing signifies validation passes)
   - throwing an error will be interpreted as failing validation
 
-* **other** _(string|string[])_ - provide the name or id of another element on the form. When validating this element, the other(s) will also have their validation routines called, assuming they have not yet been touched.
+* **other** _string|string[]_ - provide the name or id of another element on the form. When validating this element, the other(s) will also have their validation routines called, assuming they have not yet been touched.
 
 * **blur** _bool_ - validate this field on input blur
 
@@ -68,97 +72,75 @@ import { Input } from '@tswaters/react-form-validation'
 
 * **recheck** _bool_ - if recheck is passed as TRUE, once a form field is validated it will be revalidated on any change.
 
-- **OnError** _(Error|null) => void_ - will be called if there is a validation error. This will always be an error object (so check `message`) or `null` if there is no error.
+- **onError** _(Error|null) => void_ - will be called if there is a validation error. This will always be an error object (so check `message` / `code`), or `null` if there is no error.
 
-- **OnInvalid** _(bool) => void_ will be called after validation with a bool indicating the form field is invalid
+- **onInvalid** _(bool) => void_ will be called after validation with a bool indicating the form field is invalid
 
-- **OnValid** _(bool) => void_ will be called after validation with a bool indicating the form field is valid
+- **onValid** _(bool) => void_ will be called after validation with a bool indicating the form field is valid
 
-* any additional props will be passed down to the underlying `<input>` element
+Any additional props will be passed down to the underlying `input/select/textarea` element
 
-**_FormContext_**
-
-```jsx
-import { FormContext } from '@tswaters/react-form-validation'
-;<FormContext.Subscriber>
-  {{ register, unregister, validate, setInputTouched }} => {}
-</FormContext.Subscriber>
-```
+**_Validator_**
 
 ```jsx
-import { FormContext } from '@tswaters/react-form-validation'
-const { register, unregister, validate, setInputTouched } = useContext(
-  FormContext
+import { Validator } from '@tswaters/react-form-validation'
+const example = () => (
+  <Validator recheck blur>
+    {({ error, valid, invalid }) => (
+      <>
+        <label htmlFor="my-value">My Value</label>
+        <input id="my-value" name="my-value" type="text" required />
+        {valid && <div>valid</div>}
+        {invalid && <div>invalid</div>}
+        {error && <div>{error.message}</div>}
+      </>
+    )}
+  </Validator>
 )
 ```
 
-You probably don't need to use this, but is provided for completeness.
+The validator will find & replace all `input/select/textarea` elements with `Input/Select/TextArea`.
 
-The `<Form/>` element will provide this context to child elements
+The render prop, `({ error, valid, invalid, validated })` will be updated with any feedback from the constraint validation API.
 
-The `<Input />` element will subscribe and provide values so the `<Form>` can track elements
+Any props provided to `validator` will be passed through to the underlying `Input/Select/TextArea` elements.
 
 ## examples
 
-### implementing a FormGroup
+### implementing bootstrap's FormGroup
 
 ```js
-const FormGroup = forwardRef(
-  ({ className = '', id, label, validations, other, ...rest }, ref) => {
-    const [error, setError] = useState(null)
-    const [valid, setValid] = useState(null)
-    const [invalid, setInvalid] = useState(null)
-    const wasValidated = useMemo(() => error || valid || invalid, [
-      error,
-      valid,
-      invalid
-    ])
-    const handleError = useCallback(e => setError(e), [])
-    const handleValid = useCallback(e => setValid(e), [])
-    const handleInvalid = useCallback(e => setInvalid(e), [])
-    return (
-      <div
-        className={`form-group ${
-          wasValidated ? 'was-validated' : ''
-        } ${className}`}
-      >
-        <label className="control-label" htmlFor={id}>
-          {label}
-        </label>
-        <Input
-          ref={ref}
-          id={id}
-          className="form-control"
-          type="text"
-          other={other}
-          validations={validations}
-          onError={handleError}
-          onValid={handleValid}
-          onInvalid={handleInvalid}
-          {...rest}
-        />
-        {error && <div className="invalid-feedback">{error.message}</div>}
-      </div>
-    )
-  }
-)
-```
+const FormGroup = ({ id, label, ...rest }) => {
+  return (
+    <Validator recheck blur>
+      {({ error, validated }) => (
+        <div className={`form-group ${validated ? 'was-validated' : ''}`}>
+          <label className="control-label" htmlFor={id}>
+            {label}
+          </label>
+          <input id={id} className="form-control" {...rest} />
+          {error && <div className="invalid-feedback">{error.message}</div>}
+        </div>
+      )}
+    </Validator>
+  )
+}
 
-### using FormGroup
-
-The above `<FormGroup />` element is provided as an export to this module.
-
-This component includes an `input` and `label` with bootstrap classes, and `div.invalid-feedback` with the error message.
-
-You can provide any of the build-it form validation attributes, such as `required`, `minLength`, `min`, `max`, `step`, `pattern`, etc.
-
-```js
-const FormGroupExample = () => (
-  <Form noValidate preventDefeault>
-    <FormGroup id="name" name="name" label="Name" required />
-    <button type="submit">submit</button>
-  </Form>
-)
+const LoginForm = () => {
+  return (
+    <Form onSubmit={e => e.preventDefault()}>
+      <FormGroup id="user-name" name="user-name" label="User Name" required />
+      <FormGroup
+        id="password"
+        name="password"
+        label="Password"
+        type="password"
+        required
+      />
+      <button type="submit">Submit</button>
+    </Form>
+  )
+}
 ```
 
 ### Custom Validation Routines
@@ -178,10 +160,13 @@ The validation routine will consider something as failed with the following retu
 Otherwise, the validation is considered to have succeeded.
 
 ```js
-import { FormGroup, Input } from '@tswaters/react-form-validation'
+import { Validator, Input } from '@tswaters/react-form-validation'
 
-const UserInput = () => {
+const MyForm = () => {
+  const [error, setError] = useState(null)
+  const [response, setResponse] = useState(null)
   const [loading, setLoading] = useState(true)
+
   const validations = useMemo(
     () => [
       async input => {
@@ -195,23 +180,6 @@ const UserInput = () => {
     ],
     []
   )
-
-  return (
-    <FormGroup
-      label="User Name"
-      id="user-name"
-      change={true}
-      debounce={500}
-      name="user-name"
-      validations={validations}
-      className={loading ? 'loading' : ''}
-    />
-  )
-}
-
-const MyForm = () => {
-  const [error, setError] = useState(null)
-  const [response, setResponse] = useState(null)
 
   const handleSubmit = useCallback(async e => {
     e.preventDefault()
@@ -233,35 +201,17 @@ const MyForm = () => {
 
   return (
     <Form onSubmit={handleSubmit} noValidate>
-      <UserInput />
-      <FormGroup
-        id="name"
-        name="name"
-        label="Name"
-        other="same-as"
-        blur={true}
-        recheck={true}
-        required
-        validations={[
-          input =>
-            input.value === 'Homer' ? new Error('no homers allowed') : null
-        ]}
-      />
-      <FormGroup
-        id="same-as"
-        name="same-as"
-        label="Same As"
-        blur={true}
-        recheck={true}
-        required
-        validations={[
-          (input, fields) => {
-            const other = fields.find(x => x.id === 'name')
-            if (!other || other.value !== input.value)
-              throw new Error('must match')
-          }
-        ]}
-      />
+      <Validator>
+        {({ error }) => (
+          <input
+            name="user-name"
+            change={true}
+            debounce={500}
+            validations={validations}
+            className={loading ? 'loading' : ''}
+          />
+        )}
+      </Validator>
       <button type="submit">Submit</button>
       {response && <div>{response}</div>}
       {error && <div>{error.message}</div>}
