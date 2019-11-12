@@ -28,7 +28,7 @@ const useValidation = (
     onChange,
     onClick,
     onFocus,
-    validations,
+    validation,
     debounce,
     other,
     recheck,
@@ -112,11 +112,16 @@ const useValidation = (
 
   const details = useMemo(
     () => ({
-      validations,
+      validation:
+        validation == null
+          ? null
+          : Array.isArray(validation)
+          ? validation
+          : [validation],
       updateState,
       otherArray: other == null ? [] : Array.isArray(other) ? other : [other]
     }),
-    [validations, updateState, other]
+    [validation, updateState, other]
   )
 
   useEffect(() => {

@@ -59,7 +59,7 @@ import { Input, Select, TextArea } from '@tswaters/react-form-validation'
 const example = () => (
   <>
     <Input
-      validations={arrayOf(func)}
+      validation={oneOfType([arrayOf(func), func])}
       other={oneOfType([arrayOf(string), string])}
       recheck={bool}
       blur={bool}
@@ -72,9 +72,9 @@ const example = () => (
 )
 ```
 
-- **validations** _(field, others) => Promise<void|string|Error>_
+- **validation** _(field, others) => Promise<void|string|Error>_
 
-  An array of validation routines that will be called for validation. `field` is a reference to the `input/select/textarea`, `others` is an array of all form inputs (including the one being validated). You can return:
+  An function, or array of functions. Will be called for validation with two parameters (`field` - reference to the `input/select/textarea`; `others` - an array of all form inputs). You can return:
 
   - an error
   - a string (this will be interpreted as an error)
@@ -162,7 +162,7 @@ const LoginForm = () => {
 
 ### custom validation functions
 
-You can provide an array of validations to the `<Input>` element and they will be called as part of validating the element.
+You can provide validations to the `<Input/Select/TextArea>` element and they will be called as part of validating the element.
 
 These validation routines can be async and await their response. Form submission will be blocked while validations are awaiting their response.
 
@@ -184,7 +184,7 @@ const MyForm = () => {
   const [response, setResponse] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  const validations = useMemo(
+  const validation = useMemo(
     () => [
       async input => {
         setLoading(true)
@@ -224,7 +224,7 @@ const MyForm = () => {
             name="user-name"
             change={true}
             debounce={500}
-            validations={validations}
+            validation={validation}
             className={loading ? 'loading' : ''}
           />
         )}

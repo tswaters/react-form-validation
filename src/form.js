@@ -34,7 +34,7 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
 
   /**
    * Validates a single input.
-   * - Pass in a formInput to find relevant details (validations, update state function) from our fields ref.
+   * - Pass in a formInput to find relevant details (validation, update state function) from our fields ref.
    * - this allows calling this routine from anywhere which is useful.
    * - Also we pass along all the other form inputs so validation routines can check the state of the form.
    *
@@ -59,7 +59,7 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
     const field = getElement(formInput, fields.current, x => x.field)
     const others = fields.current.map(x => x.field)
 
-    for (const fn of field.details.validations ?? []) {
+    for (const fn of field.details.validation ?? []) {
       try {
         let err = await fn(formInput, others)
         if (typeof err === 'string') _error = new Error(err)

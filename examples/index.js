@@ -1,5 +1,5 @@
 import { render } from 'react-dom'
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Form, Validator } from '@tswaters/react-form-validation'
 
 const AsyncValidation = () => {
@@ -16,23 +16,18 @@ const AsyncValidation = () => {
     [shouldResolve]
   )
 
-  const validations = useMemo(
-    () => [
-      async () => {
-        setLoading(true)
-        try {
-          await getUserService()
-        } finally {
-          setLoading(false)
-        }
-      }
-    ],
-    [getUserService]
-  )
+  const validation = useCallback(async () => {
+    setLoading(true)
+    try {
+      await getUserService()
+    } finally {
+      setLoading(false)
+    }
+  }, [getUserService])
 
   return (
     <>
-      <Validator validations={validations} change debounce={1500}>
+      <Validator validation={validation} change debounce={1500}>
         {({ error, validated }) => (
           <div
             className={`form-group
@@ -96,12 +91,9 @@ render(
               blur
               recheck
               other="same-as"
-              validations={[
-                input =>
-                  input.value === 'Homer'
-                    ? new Error('no homers allowed')
-                    : null
-              ]}
+              validation={input =>
+                input.value === 'Homer' ? new Error('no homers allowed') : null
+              }
             >
               {({ error, validated }) => (
                 <div
@@ -126,13 +118,11 @@ render(
             <Validator
               blur
               recheck
-              validations={[
-                (input, fields) => {
-                  const other = fields.find(x => x.id === 'name')
-                  if (!other || other.value !== input.value)
-                    throw new Error('must match')
-                }
-              ]}
+              validation={(input, fields) => {
+                const other = fields.find(x => x.id === 'name')
+                if (!other || other.value !== input.value)
+                  throw new Error('must match')
+              }}
             >
               {({ error, validated }) => {
                 return (

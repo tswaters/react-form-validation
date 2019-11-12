@@ -63,7 +63,7 @@ const Validator = ({ children, ...rest }) => {
 
 Validator.propTypes = {
   children: func.isRequired,
-  validations: oneOfType(func, arrayOf(func))
+  validation: oneOfType([func, arrayOf(func)])
 }
 
 const memoized = memo(Validator)

@@ -233,12 +233,10 @@ describe('input types', () => {
             name="two"
             required
             blur
-            validations={[
-              (input, others) => {
-                const other = others.find(x => x.id === 'one')
-                if (other.value !== input.value) return new Error('must match')
-              }
-            ]}
+            validation={(input, others) => {
+              const other = others.find(x => x.id === 'one')
+              if (other.value !== input.value) return new Error('must match')
+            }}
             onError={e => (twoError = e)}
             onValid={e => (twoValid = e)}
             onInvalid={e => (twoInvalid = e)}
