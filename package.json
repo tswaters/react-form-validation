@@ -9,11 +9,11 @@
     "pre_build": "rimraf dist",
     "_build": "rollup -c",
     "build": "cross-env NODE_ENV=production npm run _build",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "precoverage": "rimraf coverage",
-    "coverage": "nyc --reporter=html npm test",
     "lint": "eslint src",
     "start": "npm run _build -- -w",
-    "test": "mocha"
+    "test": "nyc --reporter=text --reporter=html mocha"
   },
   "author": "Tyler Waters <tyler.waters@gmail.com>",
   "license": "MIT",
@@ -37,6 +37,7 @@
     "@babel/register": "^7.6.2",
     "babel-eslint": "^10.0.3",
     "bootstrap": "^4.3.1",
+    "coveralls": "^3.0.7",
     "cross-env": "^6.0.3",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.1",
