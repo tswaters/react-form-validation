@@ -1,5 +1,8 @@
 # React Form Validation
 
+[![Build Status](https://travis-ci.org/tswaters/react-form-validation.svg?branch=master)](https://travis-ci.org/tswaters/react-form-validation)
+[![Coverage Status](https://coveralls.io/repos/github/tswaters/react-form-validation/badge.svg?branch=master)](https://coveralls.io/github/tswaters/react-form-validation?branch=master)
+
 The goal of this library is to implement the [Constraint Validation API](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#the-constraint-validation-api) in React while not getting in your way to do it.
 
 Of the existing react form libraries, the use of the constraint validation api is woefully inadequate. Using this API properly is important for accessibility - you need to let the user agent know what is going on.
