@@ -102,11 +102,11 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
   const handleSubmit = useCallback(
     async e => {
       e.persist()
+      e.preventDefault()
       for (const { field } of fields.current) {
         await validateSingle(field, true)
       }
       if (e.target.checkValidity()) onSubmit?.(e)
-      else e.preventDefault()
     },
     [onSubmit, validateSingle]
   )
