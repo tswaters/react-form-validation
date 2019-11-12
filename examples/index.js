@@ -226,7 +226,7 @@ render(
                           required
                           className="custom-control-input"
                           type="radio"
-                          id="yes"
+                          id="no"
                           name="choose-something"
                           value="no"
                           label="No"
