@@ -16,7 +16,7 @@ A `Validator` component is also provided which attempts to make using the api a 
 
 ## api
 
-**_Form_**
+### Form
 
 ```jsx
 import { Form } from '@tswaters/react-form-validation'
@@ -33,7 +33,7 @@ const example = () => {
 
 - **NOTE:** this library calls `preventDefault` to do async validations.
 
-**_Form element components_**
+### Form element components
 
 Input/Select/TextArea take all the same props.
 
@@ -80,7 +80,7 @@ const example = () => (
 
 Any additional props will be passed down to the underlying `input/select/textarea` element
 
-**_Validator_**
+### Validator
 
 ```jsx
 import { Validator } from '@tswaters/react-form-validation'
@@ -143,7 +143,7 @@ const LoginForm = () => {
 }
 ```
 
-### Custom Validation Routines
+## Custom Validation Routines
 
 You can provide an array of validations to the `<Input>` element and they will be called as part of validating the element.
 
