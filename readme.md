@@ -4,6 +4,23 @@ The goal of this library is to implement the [Constraint Validation API](https:/
 
 Of the existing react form libraries, the use of the constraint validation api is woefully inadequate. Using this API properly is important for accessibility - you need to let the user agent know what is going on.
 
+- [usage](#usage)
+
+- [api](#api)
+
+  - [Form](#form)
+  - [form element components](#form-element-components)
+  - [Validator](#validator)
+
+- [examples](#examples)
+
+  - [implementing bootstrap's FormGroup](#implementing-bootstraps-formgroup)
+  - [custom validation functions](#custom-validation-functions)
+
+- [a note on errors](#a-note-on-errors)
+
+- [limitations / bugs](#limitations--bugs)
+
 ## usage
 
 You can import the `Form` and `Input/Select/TextArea` exports from this library.
@@ -143,7 +160,7 @@ const LoginForm = () => {
 }
 ```
 
-## Custom Validation Routines
+### custom validation functions
 
 You can provide an array of validations to the `<Input>` element and they will be called as part of validating the element.
 
@@ -220,7 +237,7 @@ const MyForm = () => {
 }
 ```
 
-## A note on errors
+## a note on errors
 
 Any errors for non-custom validation routines will be returned by the browser, so based upon the user's OS/browser language settings, you'll get different translated error messages, for better or worse.
 
@@ -244,7 +261,7 @@ const ErrorDisplay = error => {
 
 For custom error messages, `error.message` will be whatever you returned or threw back and the code will be `customError`
 
-## Limitations / Bugs
+## limitations / bugs
 
 - only the first error for a given input element will be returned
 
