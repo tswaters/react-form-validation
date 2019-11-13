@@ -6,13 +6,13 @@
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.mjs",
   "scripts": {
-    "pre_build": "rimraf dist",
-    "_build": "rollup -c",
-    "build": "cross-env NODE_ENV=production npm run _build",
+    "prebuild": "rimraf dist",
+    "build": "rollup -c",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "precoverage": "rimraf coverage",
     "lint": "eslint src",
-    "start": "npm run _build -- -w",
+    "prepublishOnly": "npm test && cross-env NODE_ENV=production npm run build",
+    "start": "cross-env NODE_ENV=development npm run build -- -w",
+    "pretest": "rimraf coverage",
     "test": "nyc --reporter=text --reporter=html mocha"
   },
   "author": "Tyler Waters <tyler.waters@gmail.com>",
