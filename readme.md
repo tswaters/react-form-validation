@@ -1,9 +1,9 @@
 # React Form Validation
 
-![[npm version]](https://img.shields.io/npm/v/@tswaters/react-form-validation)
-![[Build Status]](https://img.shields.io/travis/tswaters/react-form-validation)
-![[Coverage Status]](https://img.shields.io/coveralls/github/tswaters/react-form-validation)
-![[License]](https://img.shields.io/npm/l/@tswaters/react-form-validation)
+![[npm version](https://www.npmjs.org/package/@tswaters/react-form-validation)](https://img.shields.io/npm/v/@tswaters/react-form-validation)
+![[build status](https://travis-ci.org/tswaters/react-form-validation/)](https://img.shields.io/travis/tswaters/react-form-validation)
+![[covarage](https://coveralls.io/github/tswaters/react-form-validation)](https://img.shields.io/coveralls/github/tswaters/react-form-validation)
+![[license](https://github.com/tswaters/react-form-validation/blob/master/LICENSE)](https://img.shields.io/npm/l/@tswaters/react-form-validation)
 
 The goal of this library is to implement the [Constraint Validation API](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#the-constraint-validation-api) in React while not getting in your way to do it.
 
