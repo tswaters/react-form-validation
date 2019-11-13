@@ -1,9 +1,17 @@
 # React Form Validation
 
-![[npm version](https://www.npmjs.org/package/@tswaters/react-form-validation)](https://img.shields.io/npm/v/@tswaters/react-form-validation)
-![[build status](https://travis-ci.org/tswaters/react-form-validation/)](https://img.shields.io/travis/tswaters/react-form-validation)
-![[covarage](https://coveralls.io/github/tswaters/react-form-validation)](https://img.shields.io/coveralls/github/tswaters/react-form-validation)
-![[license](https://github.com/tswaters/react-form-validation/blob/master/LICENSE)](https://img.shields.io/npm/l/@tswaters/react-form-validation)
+<a href="https://www.npmjs.org/package/@tswaters/react-form-validation">
+  <img src="https://img.shields.io/npm/v/@tswaters/react-form-validation" alt="npm version">
+</a>
+<a href="https://travis-ci.org/tswaters/react-form-validation/">
+  <img src="https://img.shields.io/travis/tswaters/react-form-validation" alt="npm version">
+</a>
+<a href="https://coveralls.io/github/tswaters/react-form-validation">
+  <img src="https://img.shields.io/coveralls/github/tswaters/react-form-validation" alt="npm version">
+</a>
+<a href="https://github.com/tswaters/react-form-validation/blob/master/LICENSE">
+  <img src="https://img.shields.io/npm/l/@tswaters/react-form-validation" alt="npm version">
+</a>
 
 The goal of this library is to implement the [Constraint Validation API](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#the-constraint-validation-api) in React while not getting in your way to do it.
 
