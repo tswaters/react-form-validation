@@ -131,7 +131,7 @@ const useValidation = (
   }, [innerRef, register, unregister, details])
 
   useEffect(() => {
-    const { current: thisRef } = innerRef
+    const thisRef = innerRef.current
     thisRef.addEventListener('invalid', handleOnInvalid)
     return () => thisRef.removeEventListener('invalid', handleOnInvalid)
   }, [innerRef, handleOnInvalid])
