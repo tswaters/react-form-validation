@@ -55,26 +55,26 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
     formInput.setCustomValidity('')
     if (!formInput.checkValidity()) return
 
-    let _error = null
+    let error = null
     const field = getElement(formInput, fields.current, x => x.field)
     const others = fields.current.map(x => x.field)
 
     for (const fn of field.details.validation ?? []) {
       try {
         let err = await fn(formInput, others)
-        if (typeof err === 'string') _error = new Error(err)
-        else if (err instanceof Error) _error = err
+        if (typeof err === 'string') error = new Error(err)
+        else if (err instanceof Error) error = err
       } catch (err) {
-        _error = err
-        break
+        error = err
       }
+      if (error) break
     }
 
-    if (_error) {
-      formInput.setCustomValidity(_error.message)
+    if (error) {
+      formInput.setCustomValidity(error.message)
       formInput.checkValidity()
     } else {
-      field.details.updateState(_error, formInput.validity)
+      field.details.updateState(error, formInput.validity)
     }
   }, [])
 
