@@ -4,13 +4,13 @@
   <img src="https://img.shields.io/npm/v/@tswaters/react-form-validation" alt="npm version">
 </a>
 <a href="https://travis-ci.org/tswaters/react-form-validation/">
-  <img src="https://img.shields.io/travis/tswaters/react-form-validation" alt="npm version">
+  <img src="https://img.shields.io/travis/tswaters/react-form-validation" alt="build status">
 </a>
 <a href="https://coveralls.io/github/tswaters/react-form-validation">
-  <img src="https://img.shields.io/coveralls/github/tswaters/react-form-validation" alt="npm version">
+  <img src="https://img.shields.io/coveralls/github/tswaters/react-form-validation" alt="coverage">
 </a>
 <a href="https://github.com/tswaters/react-form-validation/blob/master/LICENSE">
-  <img src="https://img.shields.io/npm/l/@tswaters/react-form-validation" alt="npm version">
+  <img src="https://img.shields.io/npm/l/@tswaters/react-form-validation" alt="license (MIT)">
 </a>
 
 The goal of this library is to implement the [Constraint Validation API](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#the-constraint-validation-api) in React while not getting in your way to do it.
@@ -42,7 +42,7 @@ These are wrappers around `<form/>` and `<input/select/textarea>` elements. Any 
 
 `Input` elements must be children of a `Form` element. Under the covers, this library uses context to keep track of all fields on the form and will validate all of them if the form is submitted.
 
-A `Validator` component is also provided which attempts to make using the api a bit easier. This is a container element that uses a render prop which is called with `({ error, valid, invalid, validated })`. This routine recursively traverses any provided props to replace `input/select/textarea` elements with the exports from this library, so it will duplicate any work on the tree that react may have done on that JSX tree up to that point.
+A `Validator` component is also provided which attempts to make using the api a bit easier. This is a container element that uses a render prop which is called with `({ error, valid, invalid, validated })`. This routine recursively traverses any provided props to replace `input/select/textarea` elements with the exports from this library, so it will duplicate any work already done up to that point.
 
 ## api
 
@@ -273,6 +273,12 @@ const ErrorDisplay = error => {
 ```
 
 For custom error messages, `error.message` will be whatever you returned or threw back and the code will be `customError`
+
+## Thoughts on Performance
+
+- make sure the tree passed via `<Validator />` is pretty simple. Validator recursively traverses the tree and replaces html inputs with exports from this library.
+
+- validation functions should be memoized lest any change invoke a re-render (wrap functions with `useCallback`, or an array of functions with `memo`)
 
 ## limitations / bugs
 

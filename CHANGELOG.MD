@@ -1,3 +1,8 @@
+# 1.0.3
+
+- why are badges so difficult to get right? fixing it for real this time
+- stop checking after first error encountered, return that
+
 # 1.0.2
 
 - Another hack at badges, more tooling

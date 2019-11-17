@@ -15,7 +15,7 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
   const fields = useRef([])
 
   /**
-   * This is invoked from `useFormContext`
+   * This is invoked from `useValidation`
    * Each element, as it's mounted, must register with us so we can do things with them
    * This happens in a `useEffect` - the disposable will call the unregister function.
    */
