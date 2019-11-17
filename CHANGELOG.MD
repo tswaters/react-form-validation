@@ -1,4 +1,4 @@
-# 1.0.3
+# 1.1.0
 
 - why are badges so difficult to get right? fixing it for real this time
 - stop checking after first error encountered, return that
