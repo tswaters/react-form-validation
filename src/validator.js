@@ -14,10 +14,7 @@ import { Input, Select, TextArea } from './input'
 const mapDeep = (children, fn) =>
   Children.map(children, (child, index) =>
     isValidElement(child) &&
-    Children.toArray(child.props.children).reduce(
-      (response, child) => response || isValidElement(child),
-      false
-    )
+    Children.toArray(child.props.children).some(child => isValidElement(child))
       ? fn(
           cloneElement(child, {
             ...child.props,
