@@ -48,6 +48,9 @@ const useValidation = (
   const timeoutRef = useRef(null)
   const argsRef = useRef(null)
   const [validated, setValidated] = useState(false)
+  const [valid, setValid] = useState(null)
+  const [error, setError] = useState(null)
+  const [invalid, setInvalid] = useState(null)
 
   const waitForValidation = useCallback(
     e => {
@@ -64,13 +67,25 @@ const useValidation = (
     (error, validity) => {
       const is_valid = error == null || error === false || error === ''
       const is_invalid = !is_valid
-      onValid?.(is_valid)
-      onError?.(is_valid ? null : getError(error, validity))
-      onInvalid?.(is_invalid)
+      setValid(is_valid)
+      setInvalid(is_invalid)
+      setError(is_valid ? null : getError(error, validity))
       setValidated(true)
     },
-    [onError, onValid, onInvalid]
+    [setValid, setInvalid, setError, setValidated]
   )
+
+  useEffect(() => {
+    onValid?.(valid)
+  }, [onValid, valid])
+
+  useEffect(() => {
+    onError?.(error)
+  }, [onError, error])
+
+  useEffect(() => {
+    onInvalid?.(invalid)
+  }, [onInvalid, invalid])
 
   const handleOnInvalid = useCallback(
     ({ target: element }) =>
