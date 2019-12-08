@@ -40,14 +40,11 @@ const Validator = ({ children, ...rest }) => {
   const [error, setError] = useState(null)
   const [valid, setValid] = useState(null)
   const [invalid, setInvalid] = useState(null)
+  const [validated, setValidated] = useState(null)
   const handleError = useCallback(e => setError(e), [])
   const handleValid = useCallback(e => setValid(e), [])
   const handleInvalid = useCallback(e => setInvalid(e), [])
-  const validated = useMemo(() => error || valid || invalid, [
-    error,
-    invalid,
-    valid
-  ])
+  const handleValidated = useCallback(e => setValidated(e), [])
   return mapDeep(children({ error, valid, invalid, validated }), item => {
     const myCtor = getCtorFromItem(item)
     if (myCtor == null) return item
@@ -56,6 +53,7 @@ const Validator = ({ children, ...rest }) => {
       onError: handleError,
       onValid: handleValid,
       onInvalid: handleInvalid,
+      onValidated: handleValidated,
       ...item.props
     })
   })
