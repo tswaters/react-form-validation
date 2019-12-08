@@ -24,8 +24,8 @@ const config = (format, file, minify, server = false) => ({
       serve({
         port: 8001,
         host: '0.0.0.0',
-        path: 'index.html',
-        contentBase: ['dist', 'node_modules'],
+        path: 'examples/index.html',
+        contentBase: ['examples', 'dist', 'node_modules'],
         open: false,
         wait: 500
       })
