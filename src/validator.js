@@ -5,7 +5,6 @@ import {
   isValidElement,
   memo,
   useCallback,
-  useMemo,
   useState
 } from 'react'
 import { oneOfType, arrayOf, func } from 'prop-types'
