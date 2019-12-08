@@ -80,6 +80,7 @@ const example = () => (
       onError={func}
       onInvalid={func}
       onValid={func}
+      onValidated={func}
     />
   </>
 )
@@ -107,6 +108,8 @@ const example = () => (
 - **onInvalid** _(bool) => void_ will be called after validation with a bool indicating the form field is invalid
 
 - **onValid** _(bool) => void_ will be called after validation with a bool indicating the form field is valid
+
+- **onValidated** _(bool) => void_ will be called after an input is validated.
 
 Any additional props will be passed down to the underlying `input/select/textarea` element
 

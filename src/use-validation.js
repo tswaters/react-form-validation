@@ -37,7 +37,8 @@ const useValidation = (
     click,
     onError,
     onInvalid,
-    onValid
+    onValid,
+    onValidated
   }
 ) => {
   const ctx = useContext(FormContext)
@@ -86,6 +87,10 @@ const useValidation = (
   useEffect(() => {
     onInvalid?.(invalid)
   }, [onInvalid, invalid])
+
+  useEffect(() => {
+    onValidated?.(validated)
+  }, [onValidated, validated])
 
   const handleOnInvalid = useCallback(
     ({ target: element }) =>

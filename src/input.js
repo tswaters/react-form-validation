@@ -18,6 +18,7 @@ const propTypes = {
   onError: func,
   onValid: func,
   onInvalid: func,
+  onValidated: func,
   name: string.isRequired // form elements must have name!
 }
 
@@ -39,6 +40,7 @@ const createInput = inputType => {
         onError,
         onValid,
         onInvalid,
+        onValidated,
         ...rest
       },
       ref
@@ -64,7 +66,8 @@ const createInput = inputType => {
         click,
         onError,
         onValid,
-        onInvalid
+        onInvalid,
+        onValidated
       })
 
       return React.createElement(inputType, {
