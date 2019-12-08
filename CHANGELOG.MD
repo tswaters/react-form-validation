@@ -1,3 +1,11 @@
+# 1.2.0
+
+- add onValidated - fired once after validation occurs.
+
+- now using useEffect for event firing.
+
+^-- this change should result in less calls to `onError` `onValidated`, `onInvalid` and `onValid`
+
 # 1.1.0
 
 - why are badges so difficult to get right? fixing it for real this time

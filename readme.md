@@ -1,17 +1,13 @@
 # React Form Validation
 
-<a href="https://www.npmjs.org/package/@tswaters/react-form-validation">
-  <img src="https://img.shields.io/npm/v/@tswaters/react-form-validation" alt="npm version">
-</a>
-<a href="https://travis-ci.org/tswaters/react-form-validation/">
-  <img src="https://img.shields.io/travis/tswaters/react-form-validation" alt="build status">
-</a>
-<a href="https://coveralls.io/github/tswaters/react-form-validation">
-  <img src="https://img.shields.io/coveralls/github/tswaters/react-form-validation" alt="coverage">
-</a>
-<a href="https://github.com/tswaters/react-form-validation/blob/master/LICENSE">
-  <img src="https://img.shields.io/npm/l/@tswaters/react-form-validation" alt="license (MIT)">
-</a>
+<a href="https://www.npmjs.org/package/@tswaters/react-form-validation"><img
+  src="https://img.shields.io/npm/v/@tswaters/react-form-validation" alt="npm version"></a>
+<a href="https://travis-ci.org/tswaters/react-form-validation/"><img
+  src="https://img.shields.io/travis/tswaters/react-form-validation" alt="build status"></a>
+<a href="https://coveralls.io/github/tswaters/react-form-validation"><img
+  src="https://img.shields.io/coveralls/github/tswaters/react-form-validation" alt="coverage"></a>
+<a href="https://github.com/tswaters/react-form-validation/blob/master/LICENSE"><img
+  src="https://img.shields.io/npm/l/@tswaters/react-form-validation" alt="license (MIT)"></a>
 
 The goal of this library is to implement the [Constraint Validation API](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#the-constraint-validation-api) in React while not getting in your way to do it.
 
@@ -71,7 +67,7 @@ Input/Select/TextArea take all the same props.
 import { Input, Select, TextArea } from '@tswaters/react-form-validation'
 const example = () => (
   <>
-    <Input
+    <Input // Select | TextArea
       validation={oneOfType([arrayOf(func), func])}
       other={oneOfType([arrayOf(string), string])}
       recheck={bool}

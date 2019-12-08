@@ -98,6 +98,7 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
    * Form submit handler
    * Verify each of our inputs passes validation before calling onSubmit
    * But if validation fails, it won't ever be called - make sure to not submit the form.
+   * Calling `.persist()` because when async comes back, the `e.target` is null.
    */
   const handleSubmit = useCallback(
     async e => {
