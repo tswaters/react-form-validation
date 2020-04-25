@@ -11,12 +11,12 @@ const { window } = jsdom
 global.window = window
 global.document = window.document
 global.navigator = { userAgent: 'node.js' }
-global.requestAnimationFrame = callback => setTimeout(callback, 0)
-global.cancelAnimationFrame = id => clearTimeout(id)
+global.requestAnimationFrame = (callback) => setTimeout(callback, 0)
+global.cancelAnimationFrame = (id) => clearTimeout(id)
 
 Object.defineProperties(window, {
   ...Object.getOwnPropertyDescriptors(global),
-  ...Object.getOwnPropertyDescriptors(window)
+  ...Object.getOwnPropertyDescriptors(window),
 })
 
 const sinon = require('sinon')

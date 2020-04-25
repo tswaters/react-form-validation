@@ -91,7 +91,7 @@ render(
               blur
               recheck
               other="same-as"
-              validation={input =>
+              validation={(input) =>
                 input.value === 'Homer' ? new Error('no homers allowed') : null
               }
             >
@@ -119,7 +119,7 @@ render(
               blur
               recheck
               validation={(input, fields) => {
-                const other = fields.find(x => x.id === 'name')
+                const other = fields.find((x) => x.id === 'name')
                 if (!other || other.value !== input.value)
                   throw new Error('must match')
               }}

@@ -5,7 +5,7 @@ import {
   isValidElement,
   memo,
   useCallback,
-  useState
+  useState,
 } from 'react'
 import { oneOfType, arrayOf, func } from 'prop-types'
 import { Input, Select, TextArea } from './input'
@@ -13,18 +13,20 @@ import { Input, Select, TextArea } from './input'
 const mapDeep = (children, fn) =>
   Children.map(children, (child, index) =>
     isValidElement(child) &&
-    Children.toArray(child.props.children).some(child => isValidElement(child))
+    Children.toArray(child.props.children).some((child) =>
+      isValidElement(child)
+    )
       ? fn(
           cloneElement(child, {
             ...child.props,
-            children: mapDeep(child.props.children, fn)
+            children: mapDeep(child.props.children, fn),
           }),
           index
         )
       : fn(child, index)
   )
 
-const getCtorFromItem = item => {
+const getCtorFromItem = (item) => {
   if (!isValidElement(item)) return null
   if (item.type === 'input') return Input
   if (item.type === 'select') return Select
@@ -37,11 +39,11 @@ const Validator = ({ children, ...rest }) => {
   const [valid, setValid] = useState(null)
   const [invalid, setInvalid] = useState(null)
   const [validated, setValidated] = useState(null)
-  const handleError = useCallback(e => setError(e), [])
-  const handleValid = useCallback(e => setValid(e), [])
-  const handleInvalid = useCallback(e => setInvalid(e), [])
-  const handleValidated = useCallback(e => setValidated(e), [])
-  return mapDeep(children({ error, valid, invalid, validated }), item => {
+  const handleError = useCallback((e) => setError(e), [])
+  const handleValid = useCallback((e) => setValid(e), [])
+  const handleInvalid = useCallback((e) => setInvalid(e), [])
+  const handleValidated = useCallback((e) => setValidated(e), [])
+  return mapDeep(children({ error, valid, invalid, validated }), (item) => {
     const myCtor = getCtorFromItem(item)
     if (myCtor == null) return item
     return createElement(myCtor, {
@@ -50,14 +52,14 @@ const Validator = ({ children, ...rest }) => {
       onValid: handleValid,
       onInvalid: handleInvalid,
       onValidated: handleValidated,
-      ...item.props
+      ...item.props,
     })
   })
 }
 
 Validator.propTypes = {
   children: func.isRequired,
-  validation: oneOfType([func, arrayOf(func)])
+  validation: oneOfType([func, arrayOf(func)]),
 }
 
 const memoized = memo(Validator)

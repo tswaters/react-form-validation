@@ -4,7 +4,7 @@ import {
   useCallback,
   useState,
   useRef,
-  useMemo
+  useMemo,
 } from 'react'
 
 import { FormContext } from './context'
@@ -38,7 +38,7 @@ const useValidation = (
     onError,
     onInvalid,
     onValid,
-    onValidated
+    onValidated,
   }
 ) => {
   const ctx = useContext(FormContext)
@@ -54,7 +54,7 @@ const useValidation = (
   const [invalid, setInvalid] = useState(null)
 
   const waitForValidation = useCallback(
-    e => {
+    (e) => {
       if (debounce == null) return validate(e)
       e.persist()
       clearTimeout(timeoutRef.current)
@@ -99,7 +99,7 @@ const useValidation = (
   )
 
   const handleFocus = useCallback(
-    e => {
+    (e) => {
       onFocus?.(e)
       setInputTouched(e)
     },
@@ -107,7 +107,7 @@ const useValidation = (
   )
 
   const handleChange = useCallback(
-    e => {
+    (e) => {
       onChange?.(e)
       if ((validated && recheck) || change) waitForValidation(e)
     },
@@ -115,7 +115,7 @@ const useValidation = (
   )
 
   const handleBlur = useCallback(
-    e => {
+    (e) => {
       onBlur?.(e)
       if (blur) waitForValidation(e)
     },
@@ -123,7 +123,7 @@ const useValidation = (
   )
 
   const handleClick = useCallback(
-    e => {
+    (e) => {
       onClick?.(e)
       if (click) waitForValidation(e)
     },
@@ -139,7 +139,7 @@ const useValidation = (
           ? validation
           : [validation],
       updateState,
-      otherArray: other == null ? [] : Array.isArray(other) ? other : [other]
+      otherArray: other == null ? [] : Array.isArray(other) ? other : [other],
     }),
     [validation, updateState, other]
   )
