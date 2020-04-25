@@ -2,11 +2,11 @@ import React, { memo, useCallback, useRef, forwardRef } from 'react'
 import { func } from 'prop-types'
 import { FormContext } from './context'
 
-const getElement = (search, elements, mapper = x => x) =>
+const getElement = (search, elements, mapper = (x) => x) =>
   elements[
     Array.from(elements)
       .map(mapper)
-      .findIndex(x => x === search || x.id === search || x.name === search)
+      .findIndex((x) => x === search || x.id === search || x.name === search)
   ]
 
 const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
@@ -25,9 +25,9 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
   )
 
   const unregister = useCallback(
-    field =>
+    (field) =>
       (fields.current = fields.current.filter(
-        f => f.field.name !== field.name
+        (f) => f.field.name !== field.name
       )),
     []
   )
@@ -56,8 +56,8 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
     if (!formInput.checkValidity()) return
 
     let error = null
-    const field = getElement(formInput, fields.current, x => x.field)
-    const others = fields.current.map(x => x.field)
+    const field = getElement(formInput, fields.current, (x) => x.field)
+    const others = fields.current.map((x) => x.field)
 
     for (const fn of field.details.validation ?? []) {
       try {
@@ -84,7 +84,7 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
    */
   const validate = useCallback(
     async ({ target: element }) => {
-      const field = getElement(element, fields.current, x => x.field)
+      const field = getElement(element, fields.current, (x) => x.field)
       await validateSingle(element)
       for (const item of field.details.otherArray) {
         const other = getElement(item, element.form.elements)
@@ -101,7 +101,7 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
    * Calling `.persist()` because when async comes back, the `e.target` is null.
    */
   const handleSubmit = useCallback(
-    async e => {
+    async (e) => {
       e.persist()
       e.preventDefault()
       for (const { field } of fields.current) {
@@ -113,7 +113,7 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
   )
 
   const setInputTouched = useCallback(
-    e => (touched.current[e.target.name] = true),
+    (e) => (touched.current[e.target.name] = true),
     [touched]
   )
 
@@ -123,7 +123,7 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
         register,
         unregister,
         validate,
-        setInputTouched
+        setInputTouched,
       }}
     >
       <form ref={formRef} onSubmit={handleSubmit} {...rest}></form>
@@ -134,7 +134,7 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
 Form.displayName = 'Form'
 
 Form.propTypes = {
-  onSubmit: func
+  onSubmit: func,
 }
 
 const memoized = memo(Form)

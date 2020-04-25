@@ -157,7 +157,7 @@ const FormGroup = ({ id, label, ...rest }) => {
 
 const LoginForm = () => {
   return (
-    <Form onSubmit={e => e.preventDefault()}>
+    <Form onSubmit={(e) => e.preventDefault()}>
       <FormGroup id="user-name" name="user-name" label="User Name" required />
       <FormGroup
         id="password"
@@ -198,27 +198,27 @@ const MyForm = () => {
 
   const validation = useMemo(
     () => [
-      async input => {
+      async (input) => {
         setLoading(true)
         try {
           await UserService.checkIfAlreadyExists(input.value)
         } finally {
           setLoading(false)
         }
-      }
+      },
     ],
     []
   )
 
-  const handleSubmit = useCallback(async e => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault()
     try {
       const res = await fetch('/api', {
         method: 'POST',
         body: new FormData(e.target),
         headers: {
-          Accept: 'application/json'
-        }
+          Accept: 'application/json',
+        },
       })
       const data = await res.json()
       if (res.ok) return setResponse(data)

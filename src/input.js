@@ -19,10 +19,10 @@ const propTypes = {
   onValid: func,
   onInvalid: func,
   onValidated: func,
-  name: string.isRequired // form elements must have name!
+  name: string.isRequired, // form elements must have name!
 }
 
-const createInput = inputType => {
+const createInput = (inputType) => {
   const Wrapped = forwardRef(
     (
       {
@@ -51,7 +51,7 @@ const createInput = inputType => {
         handleBlur,
         handleChange,
         handleClick,
-        handleFocus
+        handleFocus,
       } = useValidation(innerRef, {
         onBlur,
         onChange,
@@ -67,7 +67,7 @@ const createInput = inputType => {
         onError,
         onValid,
         onInvalid,
-        onValidated
+        onValidated,
       })
 
       return React.createElement(inputType, {
@@ -76,7 +76,7 @@ const createInput = inputType => {
         onChange: handleChange,
         onClick: handleClick,
         onFocus: handleFocus,
-        ...rest
+        ...rest,
       })
     }
   )

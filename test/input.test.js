@@ -32,9 +32,9 @@ describe('input types', () => {
             recheck
             blur
             required
-            onError={e => (error = e)}
-            onValid={e => (valid = e)}
-            onInvalid={e => (invalid = e)}
+            onError={(e) => (error = e)}
+            onValid={(e) => (valid = e)}
+            onInvalid={(e) => (invalid = e)}
           />
         </Form>
       )
@@ -87,9 +87,9 @@ describe('input types', () => {
             recheck
             blur
             required
-            onError={e => (error = e)}
-            onValid={e => (valid = e)}
-            onInvalid={e => (invalid = e)}
+            onError={(e) => (error = e)}
+            onValid={(e) => (valid = e)}
+            onInvalid={(e) => (invalid = e)}
           >
             <option></option>
             <option value="yes">yes</option>
@@ -143,9 +143,9 @@ describe('input types', () => {
             blur
             recheck
             required
-            onError={e => (error = e)}
-            onValid={e => (valid = e)}
-            onInvalid={e => (invalid = e)}
+            onError={(e) => (error = e)}
+            onValid={(e) => (valid = e)}
+            onInvalid={(e) => (invalid = e)}
           />
         </Form>
       )
@@ -179,9 +179,9 @@ describe('input types', () => {
         <Form onSubmit={onSubmitStub}>
           <Input
             required
-            onError={e => (error = e)}
-            onValid={e => (valid = e)}
-            onInvalid={e => (invalid = e)}
+            onError={(e) => (error = e)}
+            onValid={(e) => (valid = e)}
+            onInvalid={(e) => (invalid = e)}
           />
         </Form>
       )
@@ -224,9 +224,9 @@ describe('input types', () => {
             required
             blur
             other="two"
-            onError={e => (oneError = e)}
-            onValid={e => (oneValid = e)}
-            onInvalid={e => (oneInvalid = e)}
+            onError={(e) => (oneError = e)}
+            onValid={(e) => (oneValid = e)}
+            onInvalid={(e) => (oneInvalid = e)}
           />
           <Input
             id="two"
@@ -234,12 +234,12 @@ describe('input types', () => {
             required
             blur
             validation={(input, others) => {
-              const other = others.find(x => x.id === 'one')
+              const other = others.find((x) => x.id === 'one')
               if (other.value !== input.value) return new Error('must match')
             }}
-            onError={e => (twoError = e)}
-            onValid={e => (twoValid = e)}
-            onInvalid={e => (twoInvalid = e)}
+            onError={(e) => (twoError = e)}
+            onValid={(e) => (twoValid = e)}
+            onInvalid={(e) => (twoInvalid = e)}
           />
         </Form>
       )
@@ -248,10 +248,7 @@ describe('input types', () => {
       const oneInput = wrapper.find('input#one')
       const twoInput = wrapper.find('input#two')
 
-      oneInput
-        .simulate('focus')
-        .simulate('change')
-        .getDOMNode().value = 'one' // you're tearing me apart enzyme
+      oneInput.simulate('focus').simulate('change').getDOMNode().value = 'one' // you're tearing me apart enzyme
       oneInput.simulate('blur')
 
       await wait()
@@ -273,10 +270,7 @@ describe('input types', () => {
       equal(twoError.code, 'valueMissing')
       equal(onSubmitStub.callCount, 0)
 
-      twoInput
-        .simulate('focus')
-        .simulate('change')
-        .getDOMNode().value = 'two' // you're tearing me apart enzyme
+      twoInput.simulate('focus').simulate('change').getDOMNode().value = 'two' // you're tearing me apart enzyme
       twoInput.simulate('blur')
 
       await wait()
@@ -288,10 +282,7 @@ describe('input types', () => {
       equal(twoError.code, 'customError')
       equal(onSubmitStub.callCount, 0)
 
-      twoInput
-        .simulate('focus')
-        .simulate('change')
-        .getDOMNode().value = 'one' // you're tearing me apart enzyme
+      twoInput.simulate('focus').simulate('change').getDOMNode().value = 'one' // you're tearing me apart enzyme
       twoInput.simulate('blur')
       form.submit()
 
@@ -319,9 +310,9 @@ describe('input types', () => {
             type="checkbox"
             value="true"
             required
-            onError={e => (error = e)}
-            onValid={e => (valid = e)}
-            onInvalid={e => (invalid = e)}
+            onError={(e) => (error = e)}
+            onValid={(e) => (valid = e)}
+            onInvalid={(e) => (invalid = e)}
           />
         </Form>
       )

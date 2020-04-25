@@ -8,10 +8,10 @@ Babel.registerPreset('babel-sucks', {
           react: 'React',
           'react-dom': 'ReactDOM',
           'prop-types': 'PropTypes',
-          'react-form-validation': 'ReactFormValidation'
-        }
-      }
-    ]
+          'react-form-validation': 'ReactFormValidation',
+        },
+      },
+    ],
   ],
-  moduleId: 'main'
+  moduleId: 'main',
 })

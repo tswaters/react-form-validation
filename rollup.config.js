@@ -14,8 +14,8 @@ const config = (format, file, minify, server = false) => ({
     globals: {
       react: 'React',
       'react-dom': 'ReactDOM',
-      'prop-types': 'PropTypes'
-    }
+      'prop-types': 'PropTypes',
+    },
   },
   plugins: [
     babel(),
@@ -27,10 +27,10 @@ const config = (format, file, minify, server = false) => ({
         path: 'examples/index.html',
         contentBase: ['examples', 'dist', 'node_modules'],
         open: false,
-        wait: 500
-      })
+        wait: 500,
+      }),
   ],
-  external: ['react', 'react-dom', 'prop-types']
+  external: ['react', 'react-dom', 'prop-types'],
 })
 
 export default [
@@ -39,5 +39,5 @@ export default [
   config('module', './dist/index.min.mjs', true),
   config('module', './dist/index.mjs'),
   config('cjs', './dist/index.cjs.min.js', true),
-  config('cjs', './dist/index.cjs.js')
+  config('cjs', './dist/index.cjs.js'),
 ]
