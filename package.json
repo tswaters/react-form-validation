@@ -59,6 +59,8 @@
     "sinon": "^9.0.2"
   },
   "babel": {
+    "sourceMaps": "both",
+    "retainLines": true,
     "presets": [
       [
         "@babel/preset-env",
@@ -153,7 +155,8 @@
     "spec": [
       "test/setup.js",
       "test/**/*.test.js"
-    ]
+    ],
+    "timeout": false
   },
   "bugs": {
     "url": "https://github.com/tswaters/react-form-validation/issues"
