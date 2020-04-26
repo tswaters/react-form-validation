@@ -1,5 +1,5 @@
 import React, { memo, useRef, forwardRef } from 'react'
-import { func, bool, arrayOf, oneOfType, string, number } from 'prop-types'
+import { func, bool, arrayOf, oneOfType, string } from 'prop-types'
 
 import { useValidation } from './use-validation'
 
@@ -10,7 +10,6 @@ const propTypes = {
   onFocus: func,
   validation: oneOfType([arrayOf(func), func]),
   other: oneOfType([arrayOf(string), string]),
-  debounce: number,
   recheck: bool,
   blur: bool,
   change: bool,
@@ -31,7 +30,6 @@ const createInput = (inputType) => {
         onChange,
         onFocus,
         validation,
-        debounce,
         other,
         recheck,
         blur,
@@ -58,7 +56,6 @@ const createInput = (inputType) => {
         onClick,
         onFocus,
         validation,
-        debounce,
         other,
         recheck,
         blur,

@@ -27,7 +27,7 @@ const AsyncValidation = () => {
 
   return (
     <>
-      <Validator validation={validation} change debounce={1500}>
+      <Validator validation={validation} change>
         {({ error, validated }) => (
           <div
             className={`form-group
