@@ -54,7 +54,7 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
    * @param {HtmlInputElement} formInput the input to validate
    * @param {boolean} [force=false] whether to bypass touched check.
    */
-  const validateSingle = useCallback(async (formInput, force = false) => {
+  const validateSingle = useCallback((formInput, force = false) => {
     const isTouched = touched.current[formInput.name]
     if (!force && !isTouched) return
 
@@ -66,13 +66,9 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
     const others = fields.current.map((x) => x.field)
 
     for (const fn of field.details.validation ?? []) {
-      try {
-        let err = await fn(formInput, others)
-        if (typeof err === 'string') error = new Error(err)
-        else if (err instanceof Error) error = err
-      } catch (err) {
-        error = err
-      }
+      let err = fn(formInput, others)
+      if (typeof err === 'string') error = new Error(err)
+      else if (err instanceof Error) error = err
       if (error) break
     }
 
@@ -89,12 +85,12 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
    * If input has `others`: upon validation, all elements in `other` are validated as well.
    */
   const validate = useCallback(
-    async ({ target: element }) => {
+    ({ target: element }) => {
       const field = getElement(element, fields.current, (x) => x.field)
-      await validateSingle(element)
+      validateSingle(element)
       for (const item of field.details.otherArray) {
         const other = getElement(item, element.form.elements)
-        if (other) await validateSingle(other)
+        if (other) validateSingle(other)
       }
     },
     [validateSingle]
@@ -102,18 +98,19 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
 
   /**
    * Form submit handler
-   * Verify each of our inputs passes validation before calling onSubmit
-   * But if validation fails, it won't ever be called - make sure to not submit the form.
-   * Calling `.persist()` because when async comes back, the `e.target` is null.
+   * Verify each of our inputs passes custom validation before calling onSubmit
+   * If custom validation fails replicate existing dom behavior of not submitting
    */
   const handleSubmit = useCallback(
-    async (e) => {
-      e.persist()
-      e.preventDefault()
+    (e) => {
       for (const { field } of fields.current) {
-        await validateSingle(field, true)
+        validateSingle(field, true)
       }
-      if (e.target.checkValidity()) onSubmit?.(e)
+      if (e.target.checkValidity()) {
+        onSubmit?.(e)
+      } else {
+        e.preventDefault()
+      }
     },
     [onSubmit, validateSingle]
   )

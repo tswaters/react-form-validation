@@ -1,87 +1,15 @@
 import { render } from 'react-dom'
-import React, { useState, useCallback } from 'react'
+import React from 'react'
 import { Form, Validator } from '@tswaters/react-form-validation'
 
-const AsyncValidation = () => {
-  const [shouldResolve, setShouldResolve] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const getUserService = useCallback(
-    () =>
-      new Promise((resolve, reject) =>
-        setTimeout(
-          () => (shouldResolve ? resolve() : reject(new Error('user exists'))),
-          500
-        )
-      ),
-    [shouldResolve]
-  )
-
-  const validation = useCallback(async () => {
-    setLoading(true)
-    try {
-      await getUserService()
-    } finally {
-      setLoading(false)
-    }
-  }, [getUserService])
-
-  return (
-    <>
-      <Validator validation={validation} change>
-        {({ error, validated }) => (
-          <div
-            className={`form-group
-              ${validated ? 'was-validated' : ''}
-              ${loading ? 'loading' : ''}`}
-          >
-            <label className="control-label" htmlFor="name">
-              Name
-            </label>
-            <input
-              id="user-name"
-              name="user-name"
-              className="form-control"
-              type="text"
-              required
-            />
-            {error && <div className="invalid-feedback">{error.message}</div>}
-          </div>
-        )}
-      </Validator>
-      <div className="form-group">
-        <div className="custom-control custom-radio custom-control-inline">
-          <input
-            type="radio"
-            id="resovle"
-            name="resovle"
-            className="custom-control-input"
-            onChange={() => setShouldResolve(true)}
-            checked={shouldResolve}
-          />
-          <label className="custom-control-label" htmlFor="resovle">
-            Resolve
-          </label>
-        </div>
-        <div className="custom-control custom-radio custom-control-inline">
-          <input
-            type="radio"
-            id="reject"
-            name="reject"
-            className="custom-control-input"
-            onChange={() => setShouldResolve(false)}
-            checked={!shouldResolve}
-          />
-          <label className="custom-control-label" htmlFor="reject">
-            Reject
-          </label>
-        </div>
-      </div>
-    </>
-  )
-}
-
 render(
-  <Form onSubmit={() => console.log('SUBMITTING!!!!!')} noValidate>
+  <Form
+    onSubmit={(e) => {
+      e.preventDefault()
+      console.log('SUBMITTING!!!!!')
+    }}
+    noValidate
+  >
     <div className="container">
       <div className="card-group">
         <div className="card">
@@ -121,7 +49,7 @@ render(
               validation={(input, fields) => {
                 const other = fields.find((x) => x.id === 'name')
                 if (!other || other.value !== input.value)
-                  throw new Error('must match')
+                  return new Error('must match')
               }}
             >
               {({ error, validated }) => {
@@ -146,12 +74,6 @@ render(
                 )
               }}
             </Validator>
-          </div>
-        </div>
-        <div className="card">
-          <div className="card-header">Async Validation</div>
-          <div className="card-body">
-            <AsyncValidation />
           </div>
         </div>
       </div>
