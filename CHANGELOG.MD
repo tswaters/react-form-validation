@@ -2,6 +2,8 @@
 
 - don't throw if context not provided in validator
 
+- remove debounce option
+
 # 1.2.0
 
 - add onValidated - fired once after validation occurs.

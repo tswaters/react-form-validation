@@ -235,7 +235,6 @@ const MyForm = () => {
           <input
             name="user-name"
             change={true}
-            debounce={500}
             validation={validation}
             className={loading ? 'loading' : ''}
           />

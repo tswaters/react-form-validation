@@ -1,11 +1,4 @@
-import {
-  useContext,
-  useEffect,
-  useCallback,
-  useState,
-  useRef,
-  useMemo,
-} from 'react'
+import { useContext, useEffect, useCallback, useState, useMemo } from 'react'
 
 import { FormContext } from './form'
 
@@ -29,7 +22,6 @@ const useValidation = (
     onClick,
     onFocus,
     validation,
-    debounce,
     other,
     recheck,
     blur,
@@ -45,23 +37,10 @@ const useValidation = (
     FormContext
   )
 
-  const timeoutRef = useRef(null)
-  const argsRef = useRef(null)
   const [validated, setValidated] = useState(false)
   const [valid, setValid] = useState(null)
   const [error, setError] = useState(null)
   const [invalid, setInvalid] = useState(null)
-
-  const waitForValidation = useCallback(
-    (e) => {
-      if (debounce == null) return validate(e)
-      e.persist()
-      clearTimeout(timeoutRef.current)
-      argsRef.current = e
-      timeoutRef.current = setTimeout(() => validate(argsRef.current), debounce)
-    },
-    [debounce, validate]
-  )
 
   const updateState = useCallback(
     (error, validity) => {
@@ -108,25 +87,25 @@ const useValidation = (
   const handleChange = useCallback(
     (e) => {
       onChange?.(e)
-      if ((validated && recheck) || change) waitForValidation(e)
+      if ((validated && recheck) || change) validate(e)
     },
-    [onChange, recheck, change, validated, waitForValidation]
+    [onChange, recheck, change, validated, validate]
   )
 
   const handleBlur = useCallback(
     (e) => {
       onBlur?.(e)
-      if (blur) waitForValidation(e)
+      if (blur) validate(e)
     },
-    [onBlur, blur, waitForValidation]
+    [onBlur, blur, validate]
   )
 
   const handleClick = useCallback(
     (e) => {
       onClick?.(e)
-      if (click) waitForValidation(e)
+      if (click) validate(e)
     },
-    [onClick, click, waitForValidation]
+    [onClick, click, validate]
   )
 
   const details = useMemo(
