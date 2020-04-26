@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useRef,
   forwardRef,
+  useMemo,
 } from 'react'
 import { func } from 'prop-types'
 export const FormContext = createContext(null)
@@ -113,15 +114,18 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
     [touched]
   )
 
+  const contextValue = useMemo(
+    () => ({
+      register,
+      unregister,
+      validate,
+      setInputTouched,
+    }),
+    [register, unregister, validate, setInputTouched]
+  )
+
   return (
-    <FormContext.Provider
-      value={{
-        register,
-        unregister,
-        validate,
-        setInputTouched,
-      }}
-    >
+    <FormContext.Provider value={contextValue}>
       <form ref={formRef} onSubmit={handleSubmit} {...rest}></form>
     </FormContext.Provider>
   )

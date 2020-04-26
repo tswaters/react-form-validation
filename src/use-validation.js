@@ -134,7 +134,10 @@ const useValidation = (
     return () => thisRef.removeEventListener('invalid', handleOnInvalid)
   }, [innerRef, handleOnInvalid])
 
-  return { handleBlur, handleChange, handleClick, handleFocus }
+  return useMemo(
+    () => ({ handleBlur, handleChange, handleClick, handleFocus }),
+    [handleBlur, handleChange, handleClick, handleFocus]
+  )
 }
 
 export { useValidation }
