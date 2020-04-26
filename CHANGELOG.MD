@@ -1,3 +1,7 @@
+# 2.0.0
+
+- don't throw if context not provided in validator
+
 # 1.2.0
 
 - add onValidated - fired once after validation occurs.

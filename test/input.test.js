@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { equal, throws } from 'assert'
+import { equal } from 'assert'
 import { stub } from 'sinon'
 import { mount } from 'enzyme'
 
@@ -9,9 +9,6 @@ import { wait } from './utils'
 
 describe('input types', () => {
   describe('textarea', () => {
-    it('throws with no form context', () => {
-      throws(() => mount(<TextArea />), /Input requires Form context/)
-    })
     it('renders properly', () => {
       const wrapper = mount(
         <Form>
@@ -60,9 +57,6 @@ describe('input types', () => {
   })
 
   describe('select', () => {
-    it('throws with no form context', () => {
-      throws(() => mount(<Select />), /Input requires Form context/)
-    })
     it('renders properly', () => {
       const wrapper = mount(
         <Form>
@@ -119,10 +113,6 @@ describe('input types', () => {
   })
 
   describe('input', () => {
-    it('throws with no form context', () => {
-      throws(() => mount(<Input />), /Input requires Form context/)
-    })
-
     it('renders properly', () => {
       const wrapper = mount(
         <Form>
