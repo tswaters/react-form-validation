@@ -70,12 +70,6 @@ const useValidation = (
     validated,
   ])
 
-  const handleOnInvalid = useCallback(
-    ({ target: element }) =>
-      updateState(new Error(element.validationMessage), element.validity),
-    [updateState]
-  )
-
   const handleFocus = useCallback(
     (e) => {
       onFocus?.(e)
@@ -130,9 +124,12 @@ const useValidation = (
 
   useEffect(() => {
     const thisRef = innerRef.current
-    thisRef.addEventListener('invalid', handleOnInvalid)
-    return () => thisRef.removeEventListener('invalid', handleOnInvalid)
-  }, [innerRef, handleOnInvalid])
+    const handler = ({ target: { validationMessage, validity } }) => {
+      updateState(new Error(validationMessage), validity)
+    }
+    thisRef.addEventListener('invalid', handler)
+    return () => thisRef.removeEventListener('invalid', handler)
+  }, [innerRef, updateState])
 
   return useMemo(
     () => ({ handleBlur, handleChange, handleClick, handleFocus }),
