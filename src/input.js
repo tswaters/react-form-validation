@@ -78,7 +78,6 @@ const createInput = (inputType) => {
     }
   )
 
-  Wrapped.isFormElement = true
   Wrapped.displayName = `Validated(${inputType})`
   Wrapped.propTypes = propTypes
 
