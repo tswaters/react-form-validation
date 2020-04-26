@@ -7,7 +7,7 @@ import {
   useMemo,
 } from 'react'
 
-import { FormContext } from './context'
+import { FormContext } from './form'
 
 const errors = new Map()
 const getErrorKey = (err, code) => `${code}_${err.message}`
