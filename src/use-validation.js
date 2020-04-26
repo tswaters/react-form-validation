@@ -55,20 +55,20 @@ const useValidation = (
   )
 
   useEffect(() => {
-    onValid?.(valid)
-  }, [onValid, valid])
-
-  useEffect(() => {
     onError?.(error)
-  }, [onError, error])
-
-  useEffect(() => {
     onInvalid?.(invalid)
-  }, [onInvalid, invalid])
-
-  useEffect(() => {
+    onValid?.(valid)
     onValidated?.(validated)
-  }, [onValidated, validated])
+  }, [
+    onError,
+    onInvalid,
+    onValid,
+    onValidated,
+    error,
+    invalid,
+    valid,
+    validated,
+  ])
 
   const handleOnInvalid = useCallback(
     ({ target: element }) =>
