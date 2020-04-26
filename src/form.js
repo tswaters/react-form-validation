@@ -1,6 +1,12 @@
-import React, { memo, useCallback, useRef, forwardRef } from 'react'
+import React, {
+  memo,
+  createContext,
+  useCallback,
+  useRef,
+  forwardRef,
+} from 'react'
 import { func } from 'prop-types'
-import { FormContext } from './context'
+export const FormContext = createContext(null)
 
 const getElement = (search, elements, mapper = (x) => x) =>
   elements[
