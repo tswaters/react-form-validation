@@ -4,6 +4,8 @@
 
 - remove debounce option
 
+- dont support async validations
+
 # 1.2.0
 
 - add onValidated - fired once after validation occurs.

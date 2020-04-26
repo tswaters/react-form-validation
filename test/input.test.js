@@ -5,7 +5,6 @@ import { stub } from 'sinon'
 import { mount } from 'enzyme'
 
 import { Form, Input, Select, TextArea } from '../src/index'
-import { wait } from './utils'
 
 describe('input types', () => {
   describe('textarea', () => {
@@ -18,7 +17,7 @@ describe('input types', () => {
       equal(wrapper.find('textarea').length, 1)
     })
 
-    it('handles validation', async () => {
+    it('handles validation', () => {
       let error = null
       let valid = null
       let invalid = null
@@ -39,15 +38,13 @@ describe('input types', () => {
       const textarea = wrapper.find('textarea')
       textarea.simulate('focus').simulate('blur')
 
-      await wait()
       equal(error.code, 'valueMissing')
       equal(valid, false)
       equal(invalid, true)
 
-      textarea.getDOMNode().value = 'test' // you're tearing me apart enzyme
+      textarea.getDOMNode().value = 'test'
       textarea.simulate('blur')
 
-      await wait()
       equal(error, null)
       equal(valid, true)
       equal(invalid, false)
@@ -70,7 +67,7 @@ describe('input types', () => {
       equal(wrapper.find('select').length, 1)
     })
 
-    it('handles validation', async () => {
+    it('handles validation', () => {
       let error = null
       let valid = null
       let invalid = null
@@ -95,15 +92,13 @@ describe('input types', () => {
       const select = wrapper.find('select')
       select.simulate('focus').simulate('blur')
 
-      await wait()
       equal(error.code, 'valueMissing')
       equal(valid, false)
       equal(invalid, true)
 
-      select.getDOMNode().selectedIndex = 1 // you're tearing me apart enzyme
+      select.getDOMNode().selectedIndex = 1
       select.simulate('blur')
 
-      await wait()
       equal(error, null)
       equal(valid, true)
       equal(invalid, false)
@@ -122,7 +117,7 @@ describe('input types', () => {
       equal(wrapper.find('input').length, 1)
     })
 
-    it('handles validation', async () => {
+    it('handles validation', () => {
       let error = null
       let valid = null
       let invalid = null
@@ -143,15 +138,14 @@ describe('input types', () => {
       const input = wrapper.find('input')
       input.simulate('focus').simulate('blur')
 
-      await wait()
       equal(error.code, 'valueMissing')
       equal(valid, false)
       equal(invalid, true)
 
-      input.simulate('change').getDOMNode().value = 'test' // you're tearing me apart enzyme
+      input.getDOMNode().value = 'test'
+      input.simulate('change')
       input.simulate('blur')
 
-      await wait()
       equal(error, null)
       equal(valid, true)
       equal(invalid, false)
@@ -159,7 +153,7 @@ describe('input types', () => {
       wrapper.unmount()
     })
 
-    it('validates upon form submission', async () => {
+    it('validates upon form submission', () => {
       const onSubmitStub = stub()
       let error = null
       let valid = null
@@ -178,17 +172,16 @@ describe('input types', () => {
 
       const input = wrapper.find('input')
       const form = wrapper.find('form')
-      form.getDOMNode().submit()
+      form.simulate('submit')
 
-      await wait()
       equal(error.code, 'valueMissing')
       equal(valid, false)
       equal(invalid, true)
 
-      input.simulate('change').getDOMNode().value = 'test' // you're tearing me apart enzyme
-      form.getDOMNode().submit()
+      input.getDOMNode().value = 'test'
+      input.simulate('change')
+      form.simulate('submit')
 
-      await wait()
       equal(error, null)
       equal(valid, true)
       equal(invalid, false)
@@ -197,7 +190,7 @@ describe('input types', () => {
       wrapper.unmount()
     })
 
-    it('handles others properly', async () => {
+    it('handles others properly', () => {
       const onSubmitStub = stub()
       let oneError = null
       let oneValid = null
@@ -234,14 +227,15 @@ describe('input types', () => {
         </Form>
       )
 
-      const form = wrapper.find('form').getDOMNode()
+      const form = wrapper.find('form')
       const oneInput = wrapper.find('input#one')
       const twoInput = wrapper.find('input#two')
 
-      oneInput.simulate('focus').simulate('change').getDOMNode().value = 'one' // you're tearing me apart enzyme
+      oneInput.simulate('focus')
+      oneInput.getDOMNode().value = 'one'
+      oneInput.simulate('change')
       oneInput.simulate('blur')
 
-      await wait()
       equal(oneValid, true)
       equal(oneInvalid, false)
       equal(oneError, null)
@@ -249,9 +243,8 @@ describe('input types', () => {
       equal(twoInvalid, null)
       equal(twoError, null)
 
-      form.submit()
+      form.simulate('submit')
 
-      await wait()
       equal(oneValid, true)
       equal(oneInvalid, false)
       equal(oneError, null)
@@ -260,10 +253,11 @@ describe('input types', () => {
       equal(twoError.code, 'valueMissing')
       equal(onSubmitStub.callCount, 0)
 
-      twoInput.simulate('focus').simulate('change').getDOMNode().value = 'two' // you're tearing me apart enzyme
+      twoInput.simulate('focus')
+      twoInput.getDOMNode().value = 'two'
+      twoInput.simulate('change')
       twoInput.simulate('blur')
 
-      await wait()
       equal(oneValid, true)
       equal(oneInvalid, false)
       equal(oneError, null)
@@ -272,11 +266,13 @@ describe('input types', () => {
       equal(twoError.code, 'customError')
       equal(onSubmitStub.callCount, 0)
 
-      twoInput.simulate('focus').simulate('change').getDOMNode().value = 'one' // you're tearing me apart enzyme
+      twoInput.simulate('focus')
+      twoInput.getDOMNode().value = 'one'
+      twoInput.simulate('change')
       twoInput.simulate('blur')
-      form.submit()
 
-      await wait()
+      form.simulate('submit')
+
       equal(oneValid, true)
       equal(oneInvalid, false)
       equal(oneError, null)
@@ -287,7 +283,7 @@ describe('input types', () => {
       wrapper.unmount()
     })
 
-    it('clicking a checkbox', async () => {
+    it('clicking a checkbox', () => {
       const onSubmitStub = stub()
       let error = null
       let valid = null
@@ -310,17 +306,15 @@ describe('input types', () => {
       const input = wrapper.find('input')
       const form = wrapper.find('form')
       input.simulate('focus')
-      form.getDOMNode().submit()
+      form.simulate('submit')
 
-      await wait()
       equal(error.code, 'valueMissing')
       equal(valid, false)
       equal(invalid, true)
 
       input.simulate('click').getDOMNode().checked = true // you're tearing me apart enzyme
-      form.getDOMNode().submit()
+      form.simulate('submit')
 
-      await wait()
       equal(error, null)
       equal(valid, true)
       equal(invalid, false)

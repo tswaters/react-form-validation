@@ -57,8 +57,6 @@ const example = () => {
 
 - **NOTE:** onSubmit will only be called if the form passes validation!
 
-- **NOTE:** this library calls `preventDefault` to do async validations.
-
 ### Form element components
 
 Input/Select/TextArea take all the same props.
@@ -176,73 +174,44 @@ const LoginForm = () => {
 
 You can provide validations to the `<Input/Select/TextArea>` element and they will be called as part of validating the element.
 
-These validation routines can be async and await their response. Form submission will be blocked while validations are awaiting their response.
-
-The validation routine will consider something as failed with the following returns:
+Validation routines must be synchronous. Validation will be considered failed with the following returns:
 
 - a string - the error returned will be `new Error(returnValue)`
 
 - an error - the error returned will be `returnValue`
 
-- throw an error - the error returned will be `thrownValue`
-
 Otherwise, the validation is considered to have succeeded.
 
 ```js
-import { Validator, Input } from '@tswaters/react-form-validation'
+import { Form, Validator } from '@tswaters/react-form-validation'
 
 const MyForm = () => {
   const [error, setError] = useState(null)
   const [response, setResponse] = useState(null)
-  const [loading, setLoading] = useState(true)
 
-  const validation = useMemo(
-    () => [
-      async (input) => {
-        setLoading(true)
-        try {
-          await UserService.checkIfAlreadyExists(input.value)
-        } finally {
-          setLoading(false)
-        }
-      },
-    ],
-    []
-  )
+  const validation = useCallback((inputRef) => {
+    if (restrictedWords.includes(inputRef.value))
+      return new Error('cant use restricted words')
+  }, [])
 
-  const handleSubmit = useCallback(async (e) => {
+  const handleSubmit = useCallback((e) => {
     e.preventDefault()
-    try {
-      const res = await fetch('/api', {
-        method: 'POST',
-        body: new FormData(e.target),
-        headers: {
-          Accept: 'application/json',
-        },
-      })
-      const data = await res.json()
-      if (res.ok) return setResponse(data)
-      throw data
-    } catch (err) {
-      setError(err)
-    }
+    console.log('completely valid, no restricted words here!')
   }, [])
 
   return (
     <Form onSubmit={handleSubmit} noValidate>
-      <Validator>
-        {({ error }) => (
-          <input
-            name="user-name"
-            change={true}
-            validation={validation}
-            className={loading ? 'loading' : ''}
-          />
-        )}
+      <Validator change validation={validation}>
+        {({ error }) => {
+          return (
+            <>
+              <input name="user-name" required />
+              {error && <div>{error.message}</div>}
+            </>
+          )
+        }}
       </Validator>
       <button type="submit">Submit</button>
-      {response && <div>{response}</div>}
-      {error && <div>{error.message}</div>}
     </Form>
   )
 }

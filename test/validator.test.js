@@ -3,7 +3,6 @@ import { stub } from 'sinon'
 import { mount } from 'enzyme'
 import { equal } from 'assert'
 import { Form, Validator } from '../src/index'
-import { wait } from './utils'
 
 describe('validator', () => {
   it('renders properly with a variety of children types', () => {
@@ -49,7 +48,7 @@ describe('validator', () => {
     equal(Object.keys(wrapper.find('textarea').props()).length, 5) // 4 added events + children
   })
 
-  it('validates properly', async () => {
+  it('validates properly', () => {
     const submitStub = stub()
     const wrapper = mount(
       <Form onSubmit={submitStub}>
@@ -68,7 +67,6 @@ describe('validator', () => {
     )
 
     wrapper.find('form').simulate('submit')
-    await wait()
 
     equal(submitStub.callCount, 0)
     equal(wrapper.find('.error').text(), 'valueMissing')
@@ -79,7 +77,6 @@ describe('validator', () => {
     wrapper.find('input').getDOMNode().value = 'test' // you're tearing me apart enzyme
     wrapper.find('input').simulate('blur')
     wrapper.find('form').simulate('submit')
-    await wait()
 
     equal(submitStub.callCount, 1)
     equal(wrapper.find('.error').text(), 'null')
