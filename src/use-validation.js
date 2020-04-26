@@ -41,10 +41,9 @@ const useValidation = (
     onValidated,
   }
 ) => {
-  const ctx = useContext(FormContext)
-  if (ctx == null) throw new Error('Input requires Form context')
-
-  const { register, unregister, validate, setInputTouched } = ctx
+  const { register, unregister, validate, setInputTouched } = useContext(
+    FormContext
+  )
 
   const timeoutRef = useRef(null)
   const argsRef = useRef(null)
