@@ -8,35 +8,25 @@ import React, {
 import { func } from 'prop-types'
 export const FormContext = createContext(null)
 
-const getElement = (search, elements, mapper = (x) => x) =>
-  elements[
-    Array.from(elements)
-      .map(mapper)
-      .findIndex((x) => x === search || x.id === search || x.name === search)
-  ]
+const getName = (ref) => ref.id || ref.name
 
 const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
   const formRef = useRef(ref)
   const touched = useRef({})
-  const fields = useRef([])
+  const fields = useRef({})
 
   /**
    * This is invoked from `useValidation`
    * Each element, as it's mounted, must register with us so we can do things with them
    * This happens in a `useEffect` - the disposable will call the unregister function.
    */
-  const register = useCallback(
-    (field, details) => fields.current.push({ field, details }),
-    []
-  )
+  const register = useCallback((ref, ctx) => {
+    fields.current[getName(ref)] = { ref, ctx }
+  }, [])
 
-  const unregister = useCallback(
-    (field) =>
-      (fields.current = fields.current.filter(
-        (f) => f.field.name !== field.name
-      )),
-    []
-  )
+  const unregister = useCallback((ref) => {
+    delete fields.current[getName(ref)]
+  }, [])
 
   /**
    * Validates a single input.
@@ -54,29 +44,27 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
    * @param {HtmlInputElement} formInput the input to validate
    * @param {boolean} [force=false] whether to bypass touched check.
    */
-  const validateSingle = useCallback((formInput, force = false) => {
-    const isTouched = touched.current[formInput.name]
+  const validateSingle = useCallback((ref, force = false) => {
+    const isTouched = touched.current[ref.name]
     if (!force && !isTouched) return
 
-    formInput.setCustomValidity('')
-    if (!formInput.checkValidity()) return
+    ref.setCustomValidity('')
+    if (!ref.checkValidity()) return // the invalid event will have fired.
 
-    let error = null
-    const field = getElement(formInput, fields.current, (x) => x.field)
-    const others = fields.current.map((x) => x.field)
+    const { ctx } = fields.current[getName(ref)]
+    const refs = Object.entries(fields.current).map(([, { ref }]) => ref)
 
-    for (const fn of field.details.validation ?? []) {
-      let err = fn(formInput, others)
-      if (typeof err === 'string') error = new Error(err)
-      else if (err instanceof Error) error = err
-      if (error) break
-    }
+    let [error] = (ctx.validation ?? [])
+      .map((fn) => fn(ref, refs))
+      .filter((valResult) => valResult != null)
 
-    if (error) {
-      formInput.setCustomValidity(error.message)
-      formInput.checkValidity()
+    if (typeof error === 'string') error = new Error(error)
+
+    if (error != null) {
+      ref.setCustomValidity(error.message)
+      ref.checkValidity()
     } else {
-      field.details.updateState(error, formInput.validity)
+      ctx.updateState(null, ref.validity)
     }
   }, [])
 
@@ -86,12 +74,17 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
    */
   const validate = useCallback(
     ({ target: element }) => {
-      const field = getElement(element, fields.current, (x) => x.field)
-      validateSingle(element)
-      for (const item of field.details.otherArray) {
-        const other = getElement(item, element.form.elements)
-        if (other) validateSingle(other)
-      }
+      const { ctx } = fields.current[getName(element)]
+      const allFields = ctx.otherArray.reduce(
+        (acc, item) => {
+          const other = fields.current[item]
+          if (other) acc.push(other.ref)
+          return acc
+        },
+        [element]
+      )
+
+      allFields.forEach((field) => validateSingle(field))
     },
     [validateSingle]
   )
@@ -103,8 +96,8 @@ const Form = forwardRef(({ onSubmit, ...rest }, ref) => {
    */
   const handleSubmit = useCallback(
     (e) => {
-      for (const { field } of fields.current) {
-        validateSingle(field, true)
+      for (const [, { ref }] of Object.entries(fields.current)) {
+        validateSingle(ref, true)
       }
       if (e.target.checkValidity()) {
         onSubmit?.(e)

@@ -108,7 +108,7 @@ const useValidation = (
     [onClick, click, validate]
   )
 
-  const details = useMemo(
+  const ctx = useMemo(
     () => ({
       validation:
         validation == null
@@ -124,9 +124,9 @@ const useValidation = (
 
   useEffect(() => {
     const thisRef = innerRef.current
-    register(thisRef, details)
+    register(thisRef, ctx)
     return () => unregister(thisRef)
-  }, [innerRef, register, unregister, details])
+  }, [innerRef, register, unregister, ctx])
 
   useEffect(() => {
     const thisRef = innerRef.current
